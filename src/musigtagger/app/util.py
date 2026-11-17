@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import shutil
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -43,7 +44,7 @@ def fsync_path(path: str | Path) -> None:
 
 
 def copy_file_durable(source: str | Path, destination: str | Path) -> None:
-    """Copy ``source`` to ``destination`` and flush the copy to disk."""
+    """Copy ``source`` to ``destination``, preserving its mode, and flush it."""
     destination = Path(destination)
     destination.parent.mkdir(parents=True, exist_ok=True)
     with open(source, "rb") as read_handle, open(destination, "wb") as write_handle:
@@ -54,6 +55,12 @@ def copy_file_durable(source: str | Path, destination: str | Path) -> None:
             write_handle.write(chunk)
         write_handle.flush()
         os.fsync(write_handle.fileno())
+    # The temporary/replacement file must keep the original's permissions; a
+    # music file silently becoming owner-only is a side effect of a tag write.
+    try:
+        shutil.copymode(source, destination)
+    except OSError:  # pragma: no cover - exotic filesystems
+        pass
 
 
 def atomic_replace(source: str | Path, destination: str | Path) -> None:

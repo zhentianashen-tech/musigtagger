@@ -185,6 +185,14 @@ class WritePathTests(AppTestCase):
         with self.assertRaises(WriteError):
             self.context.writer.undo(result.batch_id)
 
+    def test_apply_preserves_file_permissions(self) -> None:
+        import os
+        import stat
+
+        os.chmod(self.paths[0], 0o640)
+        self.context.writer.apply()
+        self.assertEqual(stat.S_IMODE(os.stat(self.paths[0]).st_mode), 0o640)
+
     def test_applying_a_later_suggestion_preserves_earlier_facets(self) -> None:
         first = self.context.writer.apply()
         self.assertEqual(first.status, "completed")
