@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import http.client
 import threading
-from urllib.parse import urlencode
+from urllib.parse import unquote_plus, urlencode
 
 from musigtagger.app.webapp import WebApp, make_server
 
@@ -120,6 +120,14 @@ class WebAppTests(AppTestCase):
         response = self.app.handle_get("/health", {})
         self.assertEqual(response.status, 200)
         self.assertEqual(response.body, b"ok")
+
+    def test_scan_notice_points_ncm_at_conversion(self) -> None:
+        (self.library / "encrypted.ncm").write_bytes(b"CTENFDAM\x00\x00")
+        response = self.app.handle_post("/scan", {"root": [str(self.library)]})
+        self.assertEqual(response.status, 303)
+        location = unquote_plus(response.headers["Location"])
+        self.assertIn("need conversion", location)
+        self.assertIn("never tags an encrypted", location)
 
     def test_unknown_route_is_404(self) -> None:
         self.assertEqual(self.app.handle_get("/nope", {}).status, 404)

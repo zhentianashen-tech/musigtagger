@@ -100,6 +100,16 @@ class StubScanner:
         for path in sorted(root.rglob("*")):
             if not path.is_file() or path.name.startswith("."):
                 continue
+            if path.suffix == ".ncm":
+                yield ScanItem(
+                    path=path,
+                    error=(
+                        "NetEase .ncm encrypted container: convert to FLAC/MP3 "
+                        "first (step 0), then scan the converted tree"
+                    ),
+                    code="ncm_requires_conversion",
+                )
+                continue
             if path.suffix != ".fake":
                 yield ScanItem(path=path, error="unsupported test container")
                 continue

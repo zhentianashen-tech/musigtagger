@@ -86,6 +86,32 @@ class IngestTests(AppTestCase):
         )
         self.assertEqual(source_file.read_bytes(), b"audio")
 
+    def test_ncm_files_are_reported_as_needing_conversion(self) -> None:
+        make_library(self.library, 1)
+        (self.library / "encrypted.ncm").write_bytes(b"CTENFDAM\x00\x00")
+        report = self.scan()
+        self.assertEqual(report.indexed, 1)
+        self.assertEqual(report.ncm_requires_conversion, 1)
+        ncm_skips = [
+            item
+            for item in report.skipped
+            if item.code == "ncm_requires_conversion"
+        ]
+        self.assertEqual(len(ncm_skips), 1)
+        self.assertIn("convert", ncm_skips[0].reason)
+
+    def test_bundled_scanner_flags_ncm_before_touching_mutagen(self) -> None:
+        from musigtagger.app.ingest import MutagenScanner
+
+        self.library.mkdir(parents=True, exist_ok=True)
+        ncm = self.library / "track.ncm"
+        ncm.write_bytes(b"CTENFDAM" + b"\x00" * 32)
+        items = list(MutagenScanner().scan(self.library))
+        self.assertEqual(len(items), 1)
+        self.assertIsNone(items[0].descriptor)
+        self.assertEqual(items[0].code, "ncm_requires_conversion")
+        self.assertIn("convert", items[0].error or "")
+
     def test_scanner_errors_are_reported_per_path(self) -> None:
         self.library.mkdir(parents=True, exist_ok=True)
         report = self.context.ingestion.scan(self.library)

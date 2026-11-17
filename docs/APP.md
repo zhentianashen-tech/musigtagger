@@ -12,14 +12,19 @@ writes audio files (`CONTRACTS.md` §3).
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e .            # installs the pinned mutagen==1.48.1
 
+# 0. convert non-standard containers first (NetEase .ncm -> FLAC/MP3).
+#    MUSI-12 ships that decoder/CLI; its output directory is the library below.
+#    Conversion is a remux of the embedded MP3/FLAC stream, not a transcode;
+#    the encrypted source is never modified.
+
 # 1. review app (binds 127.0.0.1:8765; no network access needed)
 python -m musigtagger.app \
-  --library-root ~/Music/import \
+  --library-root ~/Music/import-converted \
   --provider myengine.metadata:MetadataProvider \
   serve
 
 # 2. or drive the same workflow from the shell
-python -m musigtagger.app --library-root ~/Music/import scan
+python -m musigtagger.app --library-root ~/Music/import-converted scan
 python -m musigtagger.app status
 python -m musigtagger.app apply
 python -m musigtagger.app undo --batch 1
@@ -32,6 +37,19 @@ Every command accepts `--db`, `--backup-dir`, `--events`, `--taxonomy-dir`,
 
 Default files (relative to the working directory): `library.sqlite3`,
 `backups/`, `events.jsonl`.
+
+### Step 0: conversion before scanning
+
+The scan step only indexes files that `mutagen` can parse (mp3, flac, ogg/opus).
+A `.ncm` container is **not** an audio file: it must be converted to FLAC/MP3
+first, and the converted tree — never the encrypted original — is what the app
+scans, backs up, writes, and undoes. Pointing `--library-root` at an `.ncm`
+directory does not work by design; the scan reports those files explicitly as
+needing conversion rather than silently ignoring them.
+
+Why the write path makes this non-negotiable: `tracks.path` is the target of the
+backup and the tag write. A scan-time temporary decode cannot be the write
+target, so conversion must produce persistent files.
 
 ## Where the pieces are
 
@@ -167,13 +185,22 @@ operational history (what was written, what was backed up, what was restored).
 
 ### Note on the actual test library
 
-The mounted library at `/test-data/music-source` currently contains **47
-`.ncm` files** (NetEase Cloud Music's encrypted container) plus cover art — not
-mp3/flac/ogg. `mutagen` cannot parse `.ncm`, so a scan of that directory
-currently reports 47 skipped files with a reason and indexes zero tracks. Real
-end-to-end tagging of that library needs either a decrypt/convert step or
-standard-format material in `music-working`; that is outside this issue's scope
-(no audio providers) and should be resolved by the leader / MUSI-7.
+The mounted library at `/test-data/music-source` contains **47 `.ncm` files**
+(NetEase Cloud Music's encrypted container) plus cover art — no mp3/flac/ogg.
+`mutagen` cannot parse `.ncm`, so a scan of that directory reports 47 files as
+`ncm_requires_conversion` and indexes zero tracks. That is the correct, explicit
+behaviour: conversion is step 0.
+
+The conversion itself belongs to **MUSI-12** (decoder module + CLI, engine
+engineer; one-file-in/one-file-out). I verified the published algorithm against
+the operator's real files read-only: all **47/47** decode to a valid MP3 stream
+(ID3v2.4 tag followed by a valid MPEG frame chain; duration/bitrate consistent
+with the container metadata), with the original files untouched. The payload is
+already MP3, so this is remux — no transcode and no quality loss.
+
+Once MUSI-12 lands: convert into `/test-data/music-working/...` (or any writable
+tree), then run the app with `--library-root` pointing at the converted output.
+The app's scan, review, apply, backup, and undo then operate on real files.
 
 ## Test results
 
@@ -183,7 +210,7 @@ Run offline:
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-- 84 scaffold/contract/taxonomy tests + 75 application tests = **159 tests**.
+- 84 scaffold/contract/taxonomy tests + 78 application tests = **162 tests**.
 - The real-container tests in `tests/test_tagio_mutagen.py` require `mutagen`.
   They are skipped in a runtime without it (they degrade to an explicit skip,
   not a failure). In this runtime `mutagen` is not installed and the environment

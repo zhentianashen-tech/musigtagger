@@ -42,12 +42,19 @@ class ScanItem:
     error: str | None = None
     file_size_bytes: int | None = None
     mtime_ns: int | None = None
+    #: Machine-readable skip category, e.g. ``ncm_requires_conversion``.
+    code: str | None = None
 
 
 @dataclass(frozen=True)
 class SkippedPath:
     path: str
     reason: str
+    code: str = "unreadable"
+
+
+#: Skip codes the UI/CLI can turn into an actionable next step.
+SKIP_NCM_REQUIRES_CONVERSION = "ncm_requires_conversion"
 
 
 @dataclass(frozen=True)
@@ -64,6 +71,19 @@ class ScanReport:
     @property
     def skipped_count(self) -> int:
         return len(self.skipped)
+
+    @property
+    def ncm_requires_conversion(self) -> int:
+        """How many skipped files are encrypted NCM containers, not audio.
+
+        Conversion is **step 0** of the pipeline: the operator converts `.ncm`
+        containers to FLAC/MP3 and scans the converted tree. Scanning the raw
+        container cannot work — ``mutagen`` cannot read it and the write path
+        must never try to tag an encrypted file.
+        """
+        return sum(
+            1 for item in self.skipped if item.code == SKIP_NCM_REQUIRES_CONVERSION
+        )
 
 
 @runtime_checkable
@@ -136,6 +156,19 @@ class MutagenScanner:
             stat = path.stat()
         except OSError as exc:
             return ScanItem(path=path, error=f"cannot stat: {exc}")
+        if path.suffix.lower() == ".ncm":
+            # Conversion is step 0. The encrypted container is not an audio file
+            # and must never be a write target; tell the operator what to do.
+            return ScanItem(
+                path=path,
+                error=(
+                    "NetEase .ncm encrypted container: convert to FLAC/MP3 "
+                    "first (step 0), then scan the converted tree"
+                ),
+                file_size_bytes=stat.st_size,
+                mtime_ns=stat.st_mtime_ns,
+                code=SKIP_NCM_REQUIRES_CONVERSION,
+            )
         try:
             descriptor = self._descriptor(path)
         except Exception as exc:  # noqa: BLE001 - per-file isolation
@@ -248,7 +281,11 @@ class IngestionService:
         for item in self.scanner.scan(scan_root):
             if item.descriptor is None:
                 skipped.append(
-                    SkippedPath(path=str(item.path), reason=item.error or "unreadable")
+                    SkippedPath(
+                        path=str(item.path),
+                        reason=item.error or "unreadable",
+                        code=item.code or "unreadable",
+                    )
                 )
                 continue
             track_id = self.store.upsert_track(
@@ -265,6 +302,7 @@ class IngestionService:
                         SkippedPath(
                             path=str(item.path),
                             reason=f"provider {source_name} failed: {exc}",
+                            code="provider_error",
                         )
                     )
                     continue
@@ -277,6 +315,7 @@ class IngestionService:
                                     f"provider {source_name} returned a non-"
                                     f"TagSuggestion: {suggestion!r}"
                                 ),
+                                code="provider_contract",
                             )
                         )
                         continue
@@ -291,6 +330,7 @@ class IngestionService:
                                     f"provider {source_name} suggested unknown tag "
                                     f"{suggestion.tag_id!r}: {exc}"
                                 ),
+                                code="unknown_tag",
                             )
                         )
                         continue

@@ -298,6 +298,12 @@ class WebApp:
             f"{report.suggestions_new} new suggestion(s) "
             f"({report.suggestions_duplicate} duplicate)."
         )
+        if report.ncm_requires_conversion:
+            message += (
+                f" {report.ncm_requires_conversion} .ncm file(s) need conversion "
+                "first — convert them to FLAC/MP3 and point the scan at that "
+                "directory; the app never tags an encrypted .ncm."
+            )
         if report.skipped:
             reasons = "; ".join(
                 f"{Path(item.path).name}: {item.reason}"

@@ -51,13 +51,19 @@ pytest
 
 ```bash
 pip install -e .        # pins mutagen==1.48.1
-python -m musigtagger.app --library-root ~/Music/import scan
+
+# Step 0 for NetEase libraries: convert .ncm -> FLAC/MP3 first (MUSI-12
+# decoder/CLI; a remux of the embedded stream, sources untouched), then scan
+# the converted tree:
+python -m musigtagger.app --library-root ~/Music/converted scan
 python -m musigtagger.app serve     # http://127.0.0.1:8765/
 ```
 
 The app scans, stores suggestions, lets you accept/edit/reject in the browser,
 applies reviewed tags with a verified backup of every file, and undoes a batch
-byte-for-byte. Details, safety design, and limits: [`docs/APP.md`](docs/APP.md).
+byte-for-byte. Scanning an `.ncm` directory reports those files as needing
+conversion and indexes nothing — the encrypted container is never a write
+target. Details, safety design, and limits: [`docs/APP.md`](docs/APP.md).
 
 ## Quick start (contracts only)
 
@@ -124,4 +130,6 @@ contracts; `TrackDescriptor.features` is the reserved Phase 2 seam.
 - Applied tags must exist in the pinned taxonomy version.
 - Read-only source roots (default `/test-data/music-source`) are never written,
   not even by tests.
+- Non-audio containers (`.ncm`) are converted to FLAC/MP3 before scanning; the
+  application never tags an encrypted container.
 - Schema changes after v1 are escalated before merge.

@@ -195,6 +195,14 @@ def main(argv: list[str] | None = None) -> int:
                     "produced; the review queue will be empty",
                     file=sys.stderr,
                 )
+            if report.ncm_requires_conversion:
+                print(
+                    f"note: {report.ncm_requires_conversion} .ncm file(s) were "
+                    "skipped — conversion is step 0. Convert them to FLAC/MP3 "
+                    "first (NCM decoder CLI), then scan the converted directory "
+                    "with --library-root. The app never tags an encrypted .ncm.",
+                    file=sys.stderr,
+                )
             for skipped in report.skipped[:20]:
                 print(f"  skipped {skipped.path}: {skipped.reason}")
             if len(report.skipped) > 20:
