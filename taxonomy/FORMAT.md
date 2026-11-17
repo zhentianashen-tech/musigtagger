@@ -13,10 +13,12 @@ owned by the Tag Taxonomy Designer.
 - Consumers must load by pinned version; there is no "latest" API.
 
 `taxonomy/taxonomy-0.1.0-draft.json` is the v0 document from Taxonomy Proposal
-v0 (MUSI-3), encoded here so the loader is exercised. When Taxonomy v1.0.0 is
-frozen (MUSI-5) it lands as a second file. **No schema change is required for
-that drop-in**: the loader reads the version from the document, and the
-`schema_version` stays `1`.
+v0 (MUSI-3), encoded here so the loader is exercised.
+`taxonomy/taxonomy-1.0.0.json` is the frozen Phase 1 vocabulary (MUSI-5) and is
+the version consumers pin. It dropped in with **no schema change**: the loader
+reads the version from the document, and `schema_version` stays `1`.
+Both files coexist because discovery is by filename and selection is by the
+pinned `version`, not by a "latest" ordering.
 
 ## Top-level document
 
@@ -100,11 +102,17 @@ taxonomy versioning rules.
 
 `musigtagger.contracts.taxonomy.TaxonomyLoader`:
 
-- `load(directory, *, version=...)` — **the consumer entry point**. Scans
-  `taxonomy*` files in `directory`, returns the document whose `version` is
-  exactly `version`. Missing → `TaxonomyVersionMismatch`; two files with the
-  same version → `TaxonomyVersionAmbiguous`. `version` is keyword-only and
+- `load(directory, *, version=...)` — **the consumer entry point**. Discovers
+  the documents in `directory`, returns the one whose `version` is exactly
+  `version`. Missing → `TaxonomyVersionMismatch`; two files with the same
+  version → `TaxonomyVersionAmbiguous`. `version` is keyword-only and
   required; there is no unpinned overload.
+- Discovery rule (exact): a file is considered only when it is a regular file
+  whose stem **starts with `taxonomy-`** and whose suffix is `.json`, `.yaml`,
+  or `.yml`. The filename is only a container — the version comes from the
+  document — but the prefix is required: `taxonomy.json`, `v1-taxonomy-1.0.0.json`,
+  and `taxonomy1.0.0.json` are **not** discovered. Name files
+  `taxonomy-<version>.json`; anything else in the directory is ignored.
 - `load_file(path)` — tooling/tests only. Loads a single document.
 - `available_versions(directory)` — for diagnostics/configuration UIs.
 - `dumps(taxonomy)` / `dump(taxonomy, path)` — canonical JSON serialisation.
@@ -124,6 +132,16 @@ The loader rejects, with `TaxonomyFormatError` (malformed document) or
 The loader does not evaluate semantic quality (whether a tag is a good idea,
 whether an alias is linguistically right). That stays a taxonomy-review
 decision.
+
+### Known limitation: scheme-generated `origin.lang-<iso639-3>` ids
+
+The `origin.lang-<iso639-3>` convention above is a *scheme*, and those ids are
+not enumerated as tags by design. `Taxonomy.validate_tag_ids` checks membership
+against the documents in this directory, so a scheme-generated language id is
+rejected (`UnknownTagError`) even though it is well formed. This is a known
+contract gap, not a loader defect: consuming such ids in suggestions or applied
+tags requires a leader-approved **additive** contract change first. Nothing in
+this document format needs to change to support it.
 
 ## Versioning
 
