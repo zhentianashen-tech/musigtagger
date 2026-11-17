@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local SQLite indexes and tag backups
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+backups/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
