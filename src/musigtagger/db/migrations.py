@@ -17,7 +17,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Final
 
-SCHEMA_VERSION: Final[int] = 2
+SCHEMA_VERSION: Final[int] = 3
 
 #: version -> (human description, packaged SQL file)
 _MIGRATIONS: Final[dict[int, tuple[str, str]]] = {
@@ -29,6 +29,13 @@ _MIGRATIONS: Final[dict[int, tuple[str, str]]] = {
         "schema v2: additive release-date lookup cache for the network provider "
         "(MUSI-14, escalated and approved via that issue)",
         "schema_v2.sql",
+    ),
+    3: (
+        "schema v3: query_version column on release_date_cache — lookups cached "
+        "under an older query construction are never trusted, so the MUSI-14 "
+        "era-lookup query fix actually re-runs instead of being masked by "
+        "stale no-match rows (additive; leader-directed via the reopened issue)",
+        "schema_v3.sql",
     ),
 }
 

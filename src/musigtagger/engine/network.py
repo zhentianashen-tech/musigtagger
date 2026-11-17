@@ -6,13 +6,33 @@ via the open MusicBrainz web service and proposes the matching taxonomy
 ``era.<decade>s`` tag through the same mapping the local metadata provider
 uses.
 
+Matching strategy (fixed after the v0.2 era-recall defect, MUSI-14
+reopened 2026-11-17): a *two-stage* release-group lookup.
+
+1. Stage 1 — precise: ``releasegroup:"<album>" AND artist:"<artist>"``.
+   Exact-for-artist libraries resolve here with no suspicion.
+2. Stage 2 — album-only fallback (runs only when stage 1 matches nothing):
+   ``releasegroup:"<album>"`` with the edition suffix stripped. This is what
+   makes various-artists soundtracks resolvable: a cast-credited release
+   group shares no token with a per-track artist such as ``TWICE``, so the
+   artist AND-term eliminated every result. Stage 2 requires a strong album
+   title match; when the query artist is not credited on the matched group
+   the suggestion is still proposed but **FLAGGED** in the evidence — never
+   silently accepted — so the reviewer decides (standing guidance, MUSI-14
+   2026-11-17).
+
+Edition suffixes such as `` / Deluxe Version`` are stripped from the album
+query term; they never match a release-group title.
+
 Failure behaviour (CONTRACTS §3.6): network unavailable, timeout, rate
 limit, or no match are all honest abstentions. Transport failures raise
 :class:`NetworkLookupError` so the caller (``SuggestionRunner``) logs the
 skip and continues the batch; the provider itself never blocks forever
-(every HTTP call carries a timeout) and never aborts a batch. Offline runs
-degrade to exactly the pre-MUSI-14 behaviour when the provider is simply
-not constructed.
+(every HTTP call carries a timeout) and never aborts a batch. Transient
+HTTP failures (429/5xx) are retried a bounded number of times with paced
+backoff; connection-level failures fail fast and are retried on the *next*
+run. Offline runs degrade to exactly the pre-MUSI-14 behaviour when the
+provider is simply not constructed.
 
 Privacy/locality: network requests carry only the album and artist query
 strings plus a User-Agent identifying this application — no personal data,
@@ -40,6 +60,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from typing import Final
 
 from musigtagger.contracts import (
     SuggestionProvider,
@@ -60,13 +81,47 @@ NETWORK_YEAR_CONFIDENCE = 0.85
 
 SOURCE = "network.musicbrainz"
 
-#: MusicBrainz asks anonymous clients to stay at ~1 request per second.
-DEFAULT_MIN_QUERY_INTERVAL_SECONDS = 1.0
+#: Semantic version of the lookup *query*. Bump whenever the query
+#: construction, matching rule, or edition-stripping changes in a way that
+#: could change results: cache rows written under an older query version are
+#: ignored (never trusted), so a fixed query actually re-runs instead of
+#: being masked by stale rows — the exact failure the v0.2 era-recall defect
+#: exposed (16 cached ``found=false`` rows hid the bug). History:
+#: 1 = original single-stage query; 2 = two-stage query + edition stripping
+#: (MUSI-14 defect fix, 2026-11-17).
+QUERY_VERSION: Final[int] = 2
+
+#: MusicBrainz asks anonymous clients to stay at ~1 request per second. The
+#: 1.1 s spacing (enforced across retries *and* pairs) leaves margin so a
+#: burst never tips over the documented limit — the v0.2 baseline measured
+#: 503 storms at exactly 1.0 s.
+DEFAULT_MIN_QUERY_INTERVAL_SECONDS = 1.1
 DEFAULT_TIMEOUT_SECONDS = 5.0
 _DEFAULT_SEARCH_LIMIT = 10
 
+#: Bounded retry budget for *transient* HTTP failures (429/5xx). The live
+#: search endpoint 503s on roughly a third of paced requests (measured on
+#: the v0.2 rerun and the MUSI-14 fix verification), so a 3-attempt budget
+#: still lost pairs; 5 paced attempts (linear backoff) converge within one
+#: run. Connection-level failures are not retried here; they fail fast and
+#: are retried on the next run (failures are retried, never silently
+#: dropped).
+_DEFAULT_MAX_ATTEMPTS = 5
+
 _FIRST_RELEASE_YEAR_RE = re.compile(r"^\s*(\d{4})")
 _TOKEN_SPLIT_RE = re.compile(r"[^\w]+", re.UNICODE)
+
+#: Trailing edition/delivery suffixes that appear on embedded album strings
+#: but never on release-group titles. The segment must *start* with a known
+#: edition word, so real album names that merely contain these words are not
+#: mangled. Examples stripped: `` / Deluxe Version``, ``- Remastered
+#: Edition``, ``(Deluxe)``.
+_EDITION_SUFFIX_RE = re.compile(
+    r"\s*(?:[/\-–—]\s*|\()\s*"
+    r"(?:deluxe|remastered|remaster|expanded|special|anniversary|explicit|"
+    r"limited|bonus|deluxe\s+edition|deluxe\s+version)\b[^)]*\)?\s*$",
+    re.IGNORECASE,
+)
 
 
 class NetworkLookupError(Exception):
@@ -86,6 +141,23 @@ def cache_key(normalized_album: str, normalized_artist: str) -> str:
     join is unambiguous.
     """
     return f"{normalized_album}\x1f{normalized_artist}"
+
+
+def strip_edition_suffix(album: str) -> str:
+    """Remove a trailing edition/delivery suffix from an album string.
+
+    Embedded album tags frequently carry `` / Deluxe Version``-style suffixes
+    that no release group is titled with — the v0.2 era-recall defect had
+    them eliminating every result. The segment is only stripped when it
+    *starts* with a known edition word (see :data:`_EDITION_SUFFIX_RE`), so
+    genuine album titles are preserved.
+    """
+    stripped = album.strip()
+    while True:
+        match = _EDITION_SUFFIX_RE.search(stripped)
+        if match is None:
+            return stripped.strip()
+        stripped = stripped[: match.start()].rstrip(" /-–—(")
 
 
 def era_tag_for_year(taxonomy: Taxonomy, year: int) -> str | None:
@@ -133,8 +205,11 @@ class ReleaseDateCache:
             "SELECT normalized_album, normalized_artist, found, release_year,"
             " musicbrainz_release_group_id, matched_artist, matched_release,"
             " source_url, suspicion, queried_at FROM release_date_cache"
-            " WHERE cache_key = ?",
-            (cache_key(normalized_album, normalized_artist),),
+            " WHERE cache_key = ? AND query_version = ?",
+            (
+                cache_key(normalized_album, normalized_artist),
+                QUERY_VERSION,
+            ),
         ).fetchone()
         if row is None:
             return None
@@ -157,8 +232,9 @@ class ReleaseDateCache:
             "INSERT INTO release_date_cache ("
             " cache_key, normalized_album, normalized_artist, found,"
             " release_year, musicbrainz_release_group_id, matched_artist,"
-            " matched_release, source_url, suspicion, queried_at)"
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            " matched_release, source_url, suspicion, queried_at,"
+            " query_version)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             " ON CONFLICT (cache_key) DO UPDATE SET"
             " found = excluded.found, release_year = excluded.release_year,"
             " musicbrainz_release_group_id = excluded.musicbrainz_release_group_id,"
@@ -166,7 +242,8 @@ class ReleaseDateCache:
             " matched_release = excluded.matched_release,"
             " source_url = excluded.source_url,"
             " suspicion = excluded.suspicion,"
-            " queried_at = excluded.queried_at",
+            " queried_at = excluded.queried_at,"
+            " query_version = excluded.query_version",
             (
                 cache_key(lookup.normalized_album, lookup.normalized_artist),
                 lookup.normalized_album,
@@ -179,6 +256,7 @@ class ReleaseDateCache:
                 lookup.source_url,
                 lookup.suspicion,
                 lookup.queried_at,
+                QUERY_VERSION,
             ),
         )
         self.connection.commit()
@@ -187,9 +265,18 @@ class ReleaseDateCache:
 class MusicBrainzHttpTransport:
     """Thin urllib transport for the MusicBrainz search endpoint.
 
-    Every failure mode (DNS, refused connection, timeout, rate limit, 5xx,
-    non-JSON body) is raised as :class:`NetworkLookupError`; nothing here
-    retries unboundedly or waits past ``timeout_seconds``.
+    Pacing: every HTTP request (including retries) is spaced at least
+    ``min_interval_seconds`` after the previous one, across retries and
+    caller pairs alike — MusicBrainz asks anonymous clients for ~1 req/s.
+
+    Retries: *transient* HTTP failures (429, 500, 502, 503, 504) are retried
+    up to ``max_attempts`` total tries with linearly growing paced backoff
+    (the live API returns 503 bursts even below 1 req/s — measured on the
+    v0.2 rerun). Connection-level failures (DNS, refused, timeout) are **not**
+    retried here: they fail fast as :class:`NetworkLookupError` and are
+    retried by the next run, never silently dropped. Every failure mode is
+    eventually raised as :class:`NetworkLookupError`; nothing here retries
+    unboundedly or waits past ``timeout_seconds`` per attempt.
     """
 
     def __init__(
@@ -198,48 +285,102 @@ class MusicBrainzHttpTransport:
         base_url: str = "https://musicbrainz.org",
         timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
         limit: int = _DEFAULT_SEARCH_LIMIT,
+        max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
+        min_interval_seconds: float = DEFAULT_MIN_QUERY_INTERVAL_SECONDS,
         user_agent: str = (
             "MusicTagger/0.1.0 (local personal-library tagger; "
-            "no public contact endpoint)"
+            "https://github.com/zhentianashen-tech/musigtagger)"
         ),
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
         self.limit = limit
+        self.max_attempts = max(1, int(max_attempts))
+        self.min_interval_seconds = min_interval_seconds
         self.user_agent = user_agent
+        #: Counters for run ledgers: total HTTP requests sent and transient
+        #: retries performed (the operator's date-check requires recording
+        #: requests, failures, and retry behaviour).
+        self.request_count = 0
+        self.transient_retry_count = 0
+        self._last_request_at: float | None = None
 
-    def search_release_groups(self, *, album: str, artist: str) -> dict:
-        """Query ``ws/2/release-group`` and return the parsed JSON document."""
+    def _pace(self) -> None:
+        if self._last_request_at is not None and self.min_interval_seconds > 0:
+            elapsed = time.monotonic() - self._last_request_at
+            remaining = self.min_interval_seconds - elapsed
+            if remaining > 0:
+                time.sleep(remaining)
+        self._last_request_at = time.monotonic()
+
+    def search_release_groups(self, *, album: str, artist: str | None) -> dict:
+        """Query ``ws/2/release-group`` and return the parsed JSON document.
+
+        ``artist=None`` builds the album-only fallback query (stage 2 of the
+        lookup); ``artist`` set builds the precise album+artist query.
+        """
         # Lucene-reserved characters are quoted so album/artist text is treated
         # as data, never as query syntax.
-        query = (
-            f'releasegroup:"{_lucene_quote(album)}" AND '
-            f'artist:"{_lucene_quote(artist)}"'
-        )
+        if artist:
+            query = (
+                f'releasegroup:"{_lucene_quote(album)}" AND '
+                f'artist:"{_lucene_quote(artist)}"'
+            )
+        else:
+            query = f'releasegroup:"{_lucene_quote(album)}"'
         url = (
             f"{self.base_url}/ws/2/release-group/"
             f"?query={urllib.parse.quote(query, safe='')}"
             f"&fmt=json&limit={int(self.limit)}"
         )
-        request = urllib.request.Request(url, headers={"User-Agent": self.user_agent})
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
-                status = response.status
-                payload = response.read()
-        except urllib.error.HTTPError as exc:
-            if exc.code in (429, 503):
+        last_error: NetworkLookupError | None = None
+        for attempt in range(1, self.max_attempts + 1):
+            self._pace()
+            self.request_count += 1
+            request = urllib.request.Request(
+                url, headers={"User-Agent": self.user_agent}
+            )
+            try:
+                with urllib.request.urlopen(
+                    request, timeout=self.timeout_seconds
+                ) as response:
+                    status = response.status
+                    payload = response.read()
+            except urllib.error.HTTPError as exc:
+                if exc.code in (429, 500, 502, 503, 504):
+                    last_error = NetworkLookupError(
+                        f"musicbrainz rate-limited/transient failure "
+                        f"(HTTP {exc.code})"
+                    )
+                else:
+                    raise NetworkLookupError(
+                        f"musicbrainz returned HTTP {exc.code}"
+                    ) from exc
+            except (urllib.error.URLError, TimeoutError, OSError) as exc:
                 raise NetworkLookupError(
-                    f"musicbrainz rate-limited the lookup (HTTP {exc.code})"
+                    f"musicbrainz unreachable: {type(exc).__name__}: {exc}"
                 ) from exc
-            raise NetworkLookupError(
-                f"musicbrainz returned HTTP {exc.code}"
-            ) from exc
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            raise NetworkLookupError(
-                f"musicbrainz unreachable: {type(exc).__name__}: {exc}"
-            ) from exc
-        if status != 200:
-            raise NetworkLookupError(f"musicbrainz returned HTTP {status}")
+            else:
+                if status == 200:
+                    return self._parse(payload)
+                last_error = NetworkLookupError(
+                    f"musicbrainz returned HTTP {status}"
+                )
+            # Transient failure with budget left: paced backoff, then retry.
+            if attempt < self.max_attempts:
+                self.transient_retry_count += 1
+                LOGGER.warning(
+                    "MusicBrainz transient failure (attempt %d/%d): %s; retrying",
+                    attempt,
+                    self.max_attempts,
+                    last_error,
+                )
+                backoff = self.min_interval_seconds * attempt
+                self._last_request_at = time.monotonic()
+                time.sleep(backoff)
+        raise last_error  # type: ignore[misc] — set by the loop above
+
+    def _parse(self, payload: bytes) -> dict:
         try:
             document = json.loads(payload)
         except (ValueError, UnicodeDecodeError) as exc:
@@ -309,18 +450,85 @@ def resolve_release_year(
     normalized_artist: str,
     queried_at: str | None = None,
 ) -> _Resolution:
-    """Pick the best release group from a search document.
+    """Pick the best release group from a *precise* (stage 1) search document.
 
     Deterministic: results are taken in MusicBrainz score order; the first
     entry whose artist credit is compatible with the query artist wins. The
     returned ``suspicion`` is non-``None`` when the best-compatible match
-    disagrees with the query text in a way a reviewer should see (artist
-    matched only by one shared word, or no year on the group).
+    disagrees with the query text in a way a reviewer should see (album
+    title variant).
     """
+    return _resolve_document(
+        document,
+        album=album,
+        artist=artist,
+        normalized_album=normalized_album,
+        normalized_artist=normalized_artist,
+        queried_at=queried_at,
+        require_title_match=False,
+    )
+
+
+def resolve_release_year_album_only(
+    document: dict,
+    *,
+    album: str,
+    artist: str,
+    normalized_album: str,
+    normalized_artist: str,
+    queried_at: str | None = None,
+) -> _Resolution:
+    """Pick the best release group from an *album-only* (stage 2) document.
+
+    Stage 2 runs only when the precise query matched nothing, which is the
+    normal case for various-artists soundtracks: the cast-credited release
+    group shares no artist token with a per-track artist. The guard here is
+    a strong *album title* match (normalized equality, or containment in
+    either direction for punctuation/edition variants); an artist credit
+    that does not share a token with the query artist no longer rejects the
+    entry — it becomes a **FLAGGED** suspicion so the reviewer, not the
+    provider, decides (standing guidance: never silently pick). Entries that
+    do not match the album title at all are still rejected outright.
+    """
+    return _resolve_document(
+        document,
+        album=album,
+        artist=artist,
+        normalized_album=normalized_album,
+        normalized_artist=normalized_artist,
+        queried_at=queried_at,
+        require_title_match=True,
+    )
+
+
+def _title_compatible(normalized_title: str, normalized_album: str) -> bool:
+    if not normalized_title or not normalized_album:
+        return False
+    return (
+        normalized_title == normalized_album
+        or normalized_title in normalized_album
+        or normalized_album in normalized_title
+    )
+
+
+def _resolve_document(
+    document: dict,
+    *,
+    album: str,
+    artist: str,
+    normalized_album: str,
+    normalized_artist: str,
+    queried_at: str | None,
+    require_title_match: bool,
+) -> _Resolution:
     queried_at = queried_at or _utc_now()
     results = document.get("release-groups")
     if not isinstance(results, list):
         return _Resolution(_no_match(normalized_album, normalized_artist, queried_at))
+
+    # First title-compatible entry with an incompatible artist credit, kept
+    # as the flagged fallback in case no fully compatible entry exists.
+    fallback: _Resolution | None = None
 
     for entry in results:
         if not isinstance(entry, dict):
@@ -330,8 +538,6 @@ def resolve_release_year(
         credit = _credit_name(entry.get("artist-credit"))
         if not isinstance(group_id, str) or not group_id:
             continue
-        if not _artists_compatible(artist, credit):
-            continue
         first_release = entry.get("first-release-date")
         if not isinstance(first_release, str):
             continue
@@ -339,28 +545,81 @@ def resolve_release_year(
         if match is None:
             continue
         year = int(match.group(1))
+
+        # The edition-stripped query album is what the release-group title
+        # must plausibly be: comparing against the *stripped* normalization
+        # avoids flagging punctuation/edition variants (": " vs "(", the
+        # stripped " / Deluxe Version") that the strip + containment rules
+        # already account for. Only a genuinely different title is flagged.
+        normalized_query_album = normalise_text(album)
+        normalized_title = normalise_text(title or "")
+        if require_title_match and not _title_compatible(
+            normalized_title, normalized_query_album
+        ):
+            continue
+
+        artist_compatible = _artists_compatible(artist, credit)
         suspicion = None
-        if normalise_text(title or "") != normalized_album:
+        if not _title_compatible(normalized_title, normalized_query_album):
             suspicion = (
                 f"album title differs: queried {album!r}, "
                 f"matched {title!r} on release group {group_id}"
             )
+        if not artist_compatible:
+            artist_flag = (
+                f"query artist {artist!r} is not credited on the matched "
+                f"release group (album-only match; credit: {credit or 'none'!r})"
+            )
+            suspicion = f"{artist_flag}; {suspicion}" if suspicion else artist_flag
+            if require_title_match:
+                # Stage 2: keep the best title-compatible entry as a flagged
+                # fallback, but prefer a fully compatible entry if one exists.
+                if fallback is None:
+                    fallback = _Resolution(
+                        _matched(
+                            normalized_album, normalized_artist, queried_at,
+                            year, group_id, credit, title, suspicion,
+                        ),
+                        suspicion,
+                    )
+                continue
+            # Stage 1: the precise query matched this artist, so an entry
+            # credited to a different artist is rejected outright.
+            continue
         return _Resolution(
-            CachedLookup(
-                normalized_album=normalized_album,
-                normalized_artist=normalized_artist,
-                found=True,
-                release_year=year,
-                musicbrainz_release_group_id=group_id,
-                matched_artist=credit,
-                matched_release=title if isinstance(title, str) else None,
-                source_url=f"https://musicbrainz.org/release-group/{group_id}",
-                suspicion=suspicion,
-                queried_at=queried_at,
+            _matched(
+                normalized_album, normalized_artist, queried_at,
+                year, group_id, credit, title, suspicion,
             ),
             suspicion,
         )
+    if fallback is not None:
+        return fallback
     return _Resolution(_no_match(normalized_album, normalized_artist, queried_at))
+
+
+def _matched(
+    normalized_album: str,
+    normalized_artist: str,
+    queried_at: str,
+    year: int,
+    group_id: str,
+    credit: str,
+    title: object,
+    suspicion: str | None,
+) -> CachedLookup:
+    return CachedLookup(
+        normalized_album=normalized_album,
+        normalized_artist=normalized_artist,
+        found=True,
+        release_year=year,
+        musicbrainz_release_group_id=group_id,
+        matched_artist=credit,
+        matched_release=title if isinstance(title, str) else None,
+        source_url=f"https://musicbrainz.org/release-group/{group_id}",
+        suspicion=suspicion,
+        queried_at=queried_at,
+    )
 
 
 def _no_match(
@@ -459,23 +718,50 @@ class MusicBrainzReleaseYearProvider(SuggestionProvider):
                     f"{album!r} artist={artist!r}; skipping without another "
                     "network attempt"
                 )
-            self._pace()
+            query_album = strip_edition_suffix(album)
             try:
+                # Stage 1 — precise: album (edition-stripped) + artist.
+                self._pace()
                 document = self.transport.search_release_groups(
-                    album=album, artist=artist
+                    album=query_album, artist=artist
                 )
+                resolution = resolve_release_year(
+                    document,
+                    album=query_album,
+                    artist=artist,
+                    normalized_album=normalized_album,
+                    normalized_artist=normalized_artist,
+                )
+                lookup = resolution.lookup
+                suspicion = resolution.suspicion
+                if not lookup.found:
+                    # Stage 2 — album-only fallback: various-artists
+                    # soundtracks credit the release group to the cast, so
+                    # the artist AND-term can eliminate every result even
+                    # though the album is right. Title compatibility becomes
+                    # the guard; an artist mismatch is flagged, not hidden.
+                    LOGGER.info(
+                        "MusicBrainz: precise query matched nothing for "
+                        "album=%r artist=%r; trying album-only fallback",
+                        album,
+                        artist,
+                    )
+                    self._pace()
+                    document = self.transport.search_release_groups(
+                        album=query_album, artist=None
+                    )
+                    resolution = resolve_release_year_album_only(
+                        document,
+                        album=query_album,
+                        artist=artist,
+                        normalized_album=normalized_album,
+                        normalized_artist=normalized_artist,
+                    )
+                    lookup = resolution.lookup
+                    suspicion = resolution.suspicion
             except NetworkLookupError:
                 self._failed_pairs.add((normalized_album, normalized_artist))
                 raise
-            resolution = resolve_release_year(
-                document,
-                album=album,
-                artist=artist,
-                normalized_album=normalized_album,
-                normalized_artist=normalized_artist,
-            )
-            lookup = resolution.lookup
-            suspicion = resolution.suspicion
             self.cache.store(lookup)
             if not lookup.found:
                 LOGGER.info(
