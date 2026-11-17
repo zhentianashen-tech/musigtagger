@@ -42,6 +42,19 @@ class LibraryScannerTests(unittest.TestCase):
         path.write_bytes(content)
         return path
 
+    def test_full_date_formats_parse_to_release_year(self) -> None:
+        # Operator requirement (2026-11-17): a date present in any local source
+        # must surface. TDRC carries full dates; every accepted format must
+        # yield the release year the provider needs for era suggestions.
+        from musigtagger.engine.scanner import _parse_year
+
+        for raw in ("1994", "1994-05", "1994-05-01", "1994-05-01T12:34:56"):
+            with self.subTest(raw=raw):
+                self.assertEqual(_parse_year(raw), 1994)
+        for bad in (None, "", "not-a-year", "19423", "abc19945", "94"):
+            with self.subTest(bad=bad):
+                self.assertIsNone(_parse_year(bad))
+
     def test_mixed_batch_skips_malformed_track_and_upserts_the_rest(self) -> None:
         for suffix in ("mp3", "flac", "ogg"):
             self.make_file(f"good.{suffix}")
