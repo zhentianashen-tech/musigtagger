@@ -19,6 +19,7 @@ this layer is to freeze the interfaces every later component builds against.
 
 - Python 3.11+
 - `mutagen` (pinned in `pyproject.toml`) for tag I/O
+- `cryptography` (pinned) for native NCM AES decryption
 - SQLite (stdlib `sqlite3`)
 
 ## Install
@@ -82,6 +83,19 @@ print(connection.execute("PRAGMA user_version").fetchone()[0])  # 1
 The migrated schema includes `tracks`, `suggestions` (five review states),
 `write_batches`, `tag_backups`, `library_meta`, and the
 `schema_migrations` audit table. See `src/musigtagger/db/schema_v1.sql`.
+
+## NCM input
+
+Decode one local NetEase Cloud Music file losslessly (no transcoding):
+
+```bash
+musigtagger-ncm input.ncm output.flac
+```
+
+Omit `output.flac` to choose `.mp3` or `.flac` from the embedded payload. The
+source is never changed, existing outputs are not overwritten, and NCM tags and
+cover art are restored on the new file. See [`docs/ncm-format.md`](docs/ncm-format.md)
+for the decoder API and validation status.
 
 ## Repository layout
 
