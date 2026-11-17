@@ -183,7 +183,7 @@ Run offline:
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-- 84 scaffold/contract/taxonomy tests + 73 application tests = **157 tests**.
+- 84 scaffold/contract/taxonomy tests + 74 application tests = **158 tests**.
 - The real-container tests in `tests/test_tagio_mutagen.py` require `mutagen`.
   They are skipped in a runtime without it (they degrade to an explicit skip,
   not a failure). In this runtime `mutagen` is not installed and the environment

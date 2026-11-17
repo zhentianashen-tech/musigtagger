@@ -70,6 +70,16 @@ class BackupTests(AppTestCase):
             self.backups.restore(record)
         self.assertEqual(Path(record.track_path).read_bytes(), current)
 
+    def test_config_always_protects_the_read_only_source(self) -> None:
+        from musigtagger.app.config import AppConfig
+
+        config = AppConfig.from_mapping({"protected_roots": ["/tmp/another-root"]})
+        roots = {str(root) for root in config.protected_roots}
+        self.assertIn("/test-data/music-source", roots)
+        self.assertIn("/tmp/another-root", roots)
+        with self.assertRaises(ProtectedPathError):
+            config.assert_writable("/test-data/music-source/album/track.flac")
+
     def test_missing_target_is_reported_before_any_backup_is_trusted(self) -> None:
         Path(self.paths[1]).unlink()
         with self.assertRaises(BackupError):
