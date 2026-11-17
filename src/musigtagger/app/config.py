@@ -116,8 +116,8 @@ class AppConfig:
                 )
         seen: set[Path] = set()
         unique_protected: list[Path] = []
-        for path in protected:
-            absolute = _absolute(path)
+        for candidate in protected:
+            absolute = _absolute(candidate)
             if absolute not in seen:
                 seen.add(absolute)
                 unique_protected.append(absolute)
