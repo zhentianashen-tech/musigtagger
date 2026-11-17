@@ -1,8 +1,18 @@
 # v0.2 baseline acceptance (operator) — 2026-11-17
 
 **Update 2026-11-17T12:13Z:** option A executed — the safety smoke passed, so
-all five approved bars now pass. The networked date check remains the only
-precondition.
+all five approved bars now pass.
+
+**Update 2026-11-17T12:37Z:** the networked date check has now run with the
+project UA, cache reuse, and ≤1 req/s pacing. Measured **era recall 0/47
+(0.0%)**: all 16 unique album+artist pairs returned HTTP 200 with zero matching
+release groups. This is a **critical MUSI-14 provider query defect**, not an
+unmeasured value: the provider queries release groups by the embedded album
+title **plus the track artist**, while the library is a various-artists
+soundtrack whose release group is credited to the cast; the deluxe album
+suffix and composite artist strings also defeat the query. Album-only queries
+return the correct 2025-06-20 release group. Final Phase-1 acceptance should
+not claim era coverage until the provider is fixed and the date path re-run.
 
 **Accepted:** the operator's reply "your recommendation is accepted" on MUSI-9
 (comment `01a1e963-dcea-7704-b122-fc9f8e6bd098`, 2026-11-17T12:03:18Z) accepts
@@ -14,10 +24,12 @@ the recommendation attached to the v0.2 baseline report.
   (`origin/main` `5354663`, MUSI-14 `edc827d`):
   precision **93.6%** (44/47), coverage **93.6%** (44/47), batch completion
   **100%** (1/1), taxonomy conformance **100%** (47 refs).
-- **Era recall is recorded as "unmeasured — runtime egress"** for this run,
-  not as a measured zero and not as a provider defect. The run measured the
-  offline degradation path: 16/16 MusicBrainz pairs failed with "No route to
-  host", 47/47 abstentions, zero hangs.
+- **Era recall is now measured at 0/47 (0.0%)** on the live run; it is a
+  provider query-construction defect, not a denominator or test-data issue.
+  The earlier offline run's "unmeasured — runtime egress" label is superseded.
+  The four quality bars and the option-A safety bar remain accepted; the
+  operator's "correct release date is required" condition is **not met** until
+  the provider is fixed.
 - The 3 rejects (`Score Suite` ×2, `Prologue`) are accepted as the expected
   film-score false positives; the taxonomy v1.1 follow-up remains the agreed
   post-acceptance work.
@@ -25,9 +37,9 @@ the recommendation attached to the v0.2 baseline report.
   2-track copy-based smoke through the real application write path — backup
   before write, tags written, undo byte-exact, source untouched — passes all
   three harness safety checks. Evidence: `../2026-11-17-safety-smoke/`.
-- **One networked date check is required before final Phase-1 acceptance.**
-  This is the only outstanding v0.2 evaluation precondition. It does not block
-  the MUSI-8 review or the MUSI-10 integration pass.
+- The **networked date check has run** (result above). The remaining
+  precondition is the provider fix plus a re-run of the date path, not another
+  manual check.
 
 ## What is not accepted / still open
 
@@ -35,8 +47,11 @@ the recommendation attached to the v0.2 baseline report.
   leader's MUSI-8 review and the MUSI-10 integration pass still cover full app
   behaviour. There is no remaining safety blocker for Phase-1 acceptance at the
   agreed scope.
-- The **era recall number itself** is not yet measured; the 65.9% instance /
-  65% work forecast remains a forecast until the networked check runs.
+- **Era coverage is not met**: measured 0/47 because the provider's
+  album+track-artist release-group query matches none of the 16 pairs. A
+  bounded MUSI-14 fix (album-only/recording-level query, edition-suffix
+  stripping) and cache invalidation/versioning are required before the date
+  path can be accepted.
 - Final Phase-1 acceptance (MUSI-7/8/12/13/14 + MUSI-9) remains the operator's
   later decision, on the leader's recommendation after MUSI-10.
 
@@ -83,7 +98,9 @@ expected offline behavior, proving it cannot pass without egress.
 - `evaluation-report-v0.2.md` — harness report with approved thresholds.
 - `hand-check.jsonl`, `worksheet.jsonl`, `engine-events.jsonl` — decisions and
   real event stream.
-- `egress-check.txt` — DNS/TCP/API evidence for the blocked network.
+- `egress-check.txt` — DNS/TCP/API evidence for the earlier blocked network.
+- `network-live/` — live-network report, events, worksheet, hand-check, and the
+  two-pass cache/request/retry ledger; measured era recall 0/47.
 - `../2026-11-17-safety-smoke/` — option-A safety evidence: safety-evidence
   JSONL, app event stream, smoke report, RUN.md.
 - `networked-date-check-offline-smoke.json` — tool smoke test in this runtime:

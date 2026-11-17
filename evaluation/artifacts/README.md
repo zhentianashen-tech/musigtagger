@@ -70,5 +70,7 @@ album/cover on 47/47, genre/date on 0/47). The 47-track list is frozen in
 | `2026-11-17-v0.2-baseline/` | Formal v0.2 baseline on main 5354663: report, events, worksheet, hand-check, egress evidence, RUN.md |
 | `2026-11-17-v0.2-baseline/ACCEPTANCE.md` | Operator acceptance on the four quality bars plus option-A safety; era recall "unmeasured — runtime egress"; networked date check pending |
 | `../tools/networked_date_check.py` | One-shot networked date check for final Phase-1 acceptance (fails closed offline) |
+| `2026-11-17-v0.2-baseline/network-live/` | Live MusicBrainz run: era recall 0/47, 16/16 pairs no-match, two-pass cache/request/retry ledger |
+| `../tools/run_v0_2_network_baseline.py` | Instrumented live-network baseline runner (cache reuse, project UA, <=1 req/s, retries) |
 | `2026-11-17-safety-smoke/` | Option-A safety evidence: 2-track copy apply/backup/byte-exact undo, all 3 harness checks pass |
 | `../tools/safety_smoke.py` | Copy-based safety smoke runner using the real app write path |

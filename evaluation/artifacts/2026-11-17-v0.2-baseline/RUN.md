@@ -1,10 +1,11 @@
 # Plan v0.2 baseline run — 2026-11-17
 
-**Status: baseline executed on the merged `main`; the four quality bars are
-accepted by the operator (2026-11-17T12:03:18Z), the safety gate is satisfied by
-the option-A 2-track copy smoke (all five approved bars now pass), and era recall
-is recorded as "unmeasured — runtime egress". One networked date check remains
-before final Phase-1 acceptance (see `ACCEPTANCE.md`).**
+**Status: baseline executed on the merged `main`; the four quality bars and the
+option-A safety bar are accepted (all five approved bars pass). The live
+MusicBrainz run later measured **era recall 0/47 (0.0%)** — a critical provider
+query defect, not an unmeasured value. Final Phase-1 acceptance should not claim
+era coverage until the provider is fixed and the date path re-run. See
+`ACCEPTANCE.md`.**
 
 ## Engine build and input
 
@@ -44,15 +45,31 @@ PYTHONPATH=src:evaluation python evaluation/tools/run_v0_2_baseline.py eval-run-
 | Batch completion | 100% (1/1) | **PASS** |
 | Taxonomy conformance | 100% (47 refs) | **PASS** |
 | Safety | 3/3 checks pass on a 2-track copy smoke (option A) | **PASS** |
+| Era recall (report-only) | **0/47 = 0.0%** on the live MusicBrainz run | NOT ACCEPTED — provider defect |
 
 Recall (report-only): genre 93.6% (44/47), era **0/47**, origin 0/44, overall
-**31.9% instance / 30.0% work-level**. Era is not a provider-logic failure:
-`musicbrainz.org:443` has no route from this runtime (DNS resolves, TCP
-blocked; evidence in `egress-check.txt`, matching MUSI-14's own delivery
-note). If the date lookup resolved all 14 works, era would add 47/47 and lift
-instance recall to **65.9%** (work-level 65%); origin stays 0 under the
-accepted Phase 2/3 gap. `Score Suite` may still abstain even with network
-because its album is the separate score release group, so 47/47 is a ceiling.
+**31.9% instance / 30.0% work-level**. The live run superseded the offline
+"unmeasured" label: era is 0/47 because the provider's
+`releasegroup:"<album>" AND artist:"<track artists>"` query returns zero
+matching release groups for all 16 pairs on a various-artists soundtrack; the
+deluxe album suffix and composite artist strings are additional failures.
+Album-only queries return the correct 2025-06-20 release group. The date exists
+and is reachable; the provider query is the defect. A bounded provider fix plus
+cache invalidation is required, after which the date path can be re-run. Origin
+stays 0 under the accepted Phase 2/3 gap.
+
+## Live network result (2026-11-17T12:37Z)
+
+The operator enabled MusicBrainz egress. The live run used the project UA,
+reused the existing cache, fetched only misses, and stayed at ≤1 req/s:
+pass 1 fetched 16 pairs (11 no-match cached, 5 unresolved on 503 after
+retries), pass 2 reused the 11 and retried the 5; **16/16 pairs returned
+HTTP 200 with zero matching release groups**. Era recall is **0/47**, all
+unresolved included in the denominator. Root cause: the provider queries
+release groups by embedded album + **track** artist on a various-artists
+soundtrack, plus the deluxe suffix/composite-credit issues; album-only queries
+return the correct 2025-06-20 RG. A bounded provider fix + cache invalidation
+is required. Full ledger/report: `network-live/`.
 
 ## Decision (resolved 2026-11-17T12:03:18Z)
 
@@ -75,3 +92,5 @@ leader's MUSI-8 review and MUSI-10 integration still cover full app behaviour.
 - `suggestions.json`, `scan-report.json`, `batches.json`
 - `egress-check.txt` — DNS/TCP/API evidence and provider run summary
 - `../2026-11-17-safety-smoke/` — option-A safety evidence (apply/backup/undo)
+- `network-live/` — live-network report, events, hand-check, and the two-pass
+  cache/request/retry ledger (era recall 0/47, provider defect)

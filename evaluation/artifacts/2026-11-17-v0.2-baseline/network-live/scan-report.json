@@ -1,0 +1,94 @@
+{
+  "input_root": "/test-data/music-working/eval-input-ncm-remux",
+  "indexed": 47,
+  "discovered_audio_files": 47,
+  "failures": [],
+  "batch_status": "completed",
+  "with_title": 47,
+  "with_artist": 47,
+  "with_album": 47,
+  "with_genre": 0,
+  "with_year": 0,
+  "local_suggestions": 47,
+  "network_suggestions": 0,
+  "network_failures": 0,
+  "network": {
+    "cache_source": "eval-run-v0.2-network-live/library.sqlite3",
+    "cache_rows_before": 11,
+    "cache_rows_after": 16,
+    "cache_rows_found_after": 0,
+    "cache_rows_no_match_after": 16,
+    "cache_hits_at_provider": 42,
+    "cache_misses_at_provider": 5,
+    "network_requests": 6,
+    "unique_pairs_attempted": 5,
+    "retries": 1,
+    "transport_failures": 1,
+    "min_start_interval_seconds": 1.102,
+    "mean_start_interval_seconds": 1.483,
+    "user_agent": "MusicTagger/0.1.0 (local personal-library tagger; https://github.com/zhentianashen-tech/musigtagger)",
+    "pacing_contract_seconds": 1.1,
+    "attempts": [
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+        "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+        "attempt": 1,
+        "started": 30621.803688031,
+        "outcome": "ok",
+        "finished": 30622.971187948
+      },
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+        "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+        "attempt": 1,
+        "started": 30622.978053782,
+        "outcome": "ok",
+        "finished": 30623.933132282
+      },
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+        "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+        "attempt": 1,
+        "started": 30624.084148366,
+        "outcome": "ok",
+        "finished": 30625.107374866
+      },
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+        "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+        "attempt": 1,
+        "started": 30625.190161866,
+        "outcome": "ok",
+        "finished": 30626.133801242
+      },
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+        "artist": "TWICE",
+        "attempt": 1,
+        "started": 30626.292321783,
+        "outcome": "error",
+        "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+        "finished": 30627.215207867
+      },
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+        "artist": "TWICE",
+        "attempt": 2,
+        "started": 30629.21796916,
+        "outcome": "ok",
+        "finished": 30630.240110869
+      }
+    ],
+    "failures": [
+      {
+        "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+        "artist": "TWICE",
+        "attempt": 1,
+        "started": 30626.292321783,
+        "outcome": "error",
+        "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+        "finished": 30627.215207867
+      }
+    ]
+  }
+}

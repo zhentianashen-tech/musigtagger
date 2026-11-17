@@ -153,11 +153,18 @@ forecast is 65.9% / 65% if all 14 works resolve. Full evidence:
 `artifacts/2026-11-17-v0.2-baseline/RUN.md`.
 
 **Baseline accepted 2026-11-17T12:03:18Z** on the four approved quality bars;
-era recall is recorded as "unmeasured — runtime egress"; one networked date
-check remains before final Phase-1 acceptance. Record:
-`artifacts/2026-11-17-v0.2-baseline/ACCEPTANCE.md`. Check tool:
-`evaluation/tools/networked_date_check.py` (exit 3 when offline; 16 unique
-MusicBrainz pairs, ~16 paced queries, cached).
+the option-A safety smoke passed at 12:13Z (all five approved bars pass).
+Record: `artifacts/2026-11-17-v0.2-baseline/ACCEPTANCE.md`.
+
+**Live network measurement 2026-11-17T12:37Z:** with egress, the provider
+returned **no match for all 16 album+artist pairs**; era recall is **0/47
+(0.0%)**, with every unresolved work left in the denominator. Root cause is the
+provider's release-group query by embedded album + track artist on a
+various-artists soundtrack (plus deluxe-suffix and composite-credit failures);
+album-only queries return the correct 2025-06-20 release group. This is a
+critical MUSI-14 defect, not a threshold result. A bounded provider fix and
+cache invalidation/versioning are required before the era path can be accepted.
+Report and ledger: `artifacts/2026-11-17-v0.2-baseline/network-live/`.
 
 ## 7. Decisions resolved (operator, 2026-11-17)
 
@@ -208,9 +215,12 @@ There are no open evaluation-side questions blocking the baseline.
   `artifacts/2026-11-17-v0.2-baseline/ACCEPTANCE.md`.
 - 2026-11-17 12:13Z — operator chooses safety option A; the 2-track copy smoke
   through the real app write path passes all three safety checks (backup,
-  byte-exact undo, source untouched). All five approved bars now pass; the
-  networked date check is the only remaining precondition. Evidence:
-  `artifacts/2026-11-17-safety-smoke/`.
+  byte-exact undo, source untouched). All five approved bars now pass.
+  Evidence: `artifacts/2026-11-17-safety-smoke/`.
+- 2026-11-17 12:37Z — live MusicBrainz run (project UA, cache reuse, <=1 req/s,
+  3-attempt retry): 16/16 pairs no-match; era recall 0/47; provider query defect
+  routed. The era path is not accepted until fixed and re-run. Report/ledger:
+  `artifacts/2026-11-17-v0.2-baseline/network-live/`.
 
 ## 9. What was deliberately not done
 
