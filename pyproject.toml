@@ -26,6 +26,7 @@ dependencies = [
 
 [project.scripts]
 musigtagger-ncm = "musigtagger.ncm:main"
+musigtagger-suggest = "musigtagger.suggest:main"
 
 [project.optional-dependencies]
 # YAML taxonomy files are readable only when this extra is installed; the

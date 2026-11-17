@@ -1,4 +1,8 @@
-"""SQLite schema v1: version marker, constraints, review states, backups."""
+"""SQLite schema tests: version marker, constraints, review states, backups.
+
+Schema v2 (MUSI-14) adds the additive ``release_date_cache`` table; the
+v1-focused assertions below all still hold on a v2 database.
+"""
 
 from __future__ import annotations
 
@@ -24,6 +28,7 @@ EXPECTED_TABLES = {
     "write_batches",
     "tag_backups",
     "library_meta",
+    "release_date_cache",
 }
 
 
@@ -40,15 +45,17 @@ class SchemaTests(unittest.TestCase):
         return self.connection
 
     def test_version_marker(self) -> None:
-        self.assertEqual(SCHEMA_VERSION, 1)
+        self.assertEqual(SCHEMA_VERSION, 2)
         self.assertEqual(
             self.conn.execute("PRAGMA user_version").fetchone()[0], SCHEMA_VERSION
         )
         rows = self.conn.execute(
             "SELECT version, description FROM schema_migrations"
         ).fetchall()
-        self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0]["version"], 1)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(
+            [row["version"] for row in rows], [1, 2]
+        )  # forward-only audit trail
 
     def test_expected_tables_exist(self) -> None:
         rows = self.conn.execute(
@@ -62,7 +69,54 @@ class SchemaTests(unittest.TestCase):
         count = self.conn.execute(
             "SELECT COUNT(*) FROM schema_migrations"
         ).fetchone()[0]
-        self.assertEqual(count, 1)
+        self.assertEqual(count, 2)
+
+    def test_v1_database_upgrades_in_place_and_keeps_v1_rows(self) -> None:
+        """A v1 database gains the cache table without touching v1 data."""
+        with tempfile.TemporaryDirectory() as directory:
+            database = Path(directory) / "library.sqlite3"
+            connection = connect(database)
+            # Force the database to v1 only, using the packaged v1 script.
+            from musigtagger.db import migrations as migrations_module
+
+            script = migrations_module._read_migration("schema_v1.sql")
+            connection.executescript(
+                "BEGIN;\n"
+                f"{script}\n"
+                "INSERT INTO schema_migrations (version, description, applied_at)"
+                " VALUES (1, 'schema v1 (test)', '2026-11-17T00:00:00.000Z');\n"
+                "PRAGMA user_version = 1;\n"
+                "COMMIT;\n"
+            )
+            connection.execute(
+                "INSERT INTO tracks (path, title, last_scanned_at, created_at,"
+                " updated_at) VALUES (?, ?, ?, ?, ?)",
+                ("/music/a.flac", "A", NOW, NOW, NOW),
+            )
+            connection.commit()
+            self.assertEqual(
+                connection.execute("PRAGMA user_version").fetchone()[0], 1
+            )
+
+            self.assertEqual(apply_migrations(connection), 2)
+
+            self.assertEqual(
+                connection.execute("PRAGMA user_version").fetchone()[0], 2
+            )
+            # v1 rows survive untouched.
+            row = connection.execute(
+                "SELECT path, title FROM tracks"
+            ).fetchone()
+            self.assertEqual((row["path"], row["title"]), ("/music/a.flac", "A"))
+            # ...and the new table works.
+            connection.execute(
+                "INSERT INTO release_date_cache (cache_key, normalized_album,"
+                " normalized_artist, found, queried_at)"
+                " VALUES ('k', 'album', 'artist', 0, ?)",
+                (NOW,),
+            )
+            connection.commit()
+            connection.close()
 
     def test_newer_database_is_refused(self) -> None:
         self.conn.execute("PRAGMA user_version = 99")
