@@ -26,12 +26,16 @@ from musigtagger.engine import (
     SuggestionRunner,
 )
 from musigtagger.engine.network import (
+    QUERY_VERSION,
     CachedLookup,
     cache_key,
     resolve_release_year,
+    resolve_release_year_album_only,
+    strip_edition_suffix,
 )
 
 TAXONOMY_DIR = Path(__file__).resolve().parents[1] / "taxonomy"
+NOWISH = "2026-11-17T00:00:00.000Z"
 
 
 def _search_document(*release_groups: dict) -> dict:
@@ -152,12 +156,13 @@ class NetworkProviderTests(unittest.TestCase):
         self.assertEqual((album, artist), ("Work!", "Artist"))
 
     def test_negative_result_is_cached_too(self) -> None:
-        transport = FakeTransport([_search_document()])
+        transport = FakeTransport([_search_document(), _search_document()])
         provider = self._provider(transport, min_query_interval_seconds=0.0)
         track = TrackDescriptor(path="/m/a.flac", artist="Nobody", album="Nothing")
         self.assertEqual(provider.suggest(track), [])
         self.assertEqual(provider.suggest(track), [])
-        self.assertEqual(len(transport.queries), 1)
+        # one precise query + one album-only fallback = 2 requests, once
+        self.assertEqual(len(transport.queries), 2)
 
     def test_cache_round_trip_positive_and_negative_and_upsert(self) -> None:
         found = CachedLookup(
@@ -203,12 +208,16 @@ class NetworkProviderTests(unittest.TestCase):
 
     # -- matching rule ------------------------------------------------------
 
-    def test_incompatible_artist_is_not_a_match(self) -> None:
+    def test_incompatible_artist_and_album_is_not_a_match(self) -> None:
+        """Stage 1 rejects an artist mismatch; stage 2 still requires the title."""
         transport = FakeTransport(
             [
                 _search_document(
                     _release_group("rg-5", "Same Album", "Completely Different", "1999")
-                )
+                ),
+                _search_document(
+                    _release_group("rg-5b", "A Different Album", "Someone Else", "1999")
+                ),
             ]
         )
         provider = self._provider(transport, min_query_interval_seconds=0.0)
@@ -216,6 +225,21 @@ class NetworkProviderTests(unittest.TestCase):
         self.assertEqual(provider.suggest(track), [])
         cached = self.cache.get("same album", "somebody")
         self.assertFalse(cached.found)
+
+    def test_edition_suffixes_are_stripped_from_query_terms(self) -> None:
+        for album, stripped in (
+            (
+                "KPop Demon Hunters (Soundtrack from the Netflix Film"
+                " / Deluxe Version)",
+                "KPop Demon Hunters (Soundtrack from the Netflix Film",
+            ),
+            ("Arrival (Deluxe)", "Arrival"),
+            ("Nightfall - Remastered Edition", "Nightfall"),
+            ("Ordinary Album", "Ordinary Album"),
+            # A title that merely contains an edition word is not mangled.
+            ("Deluxe", "Deluxe"),
+        ):
+            self.assertEqual(strip_edition_suffix(album), stripped, album)
 
     def test_multi_artist_credit_matches(self) -> None:
         document = _search_document(
@@ -242,6 +266,165 @@ class NetworkProviderTests(unittest.TestCase):
         # a later batch sees the flag from cache without another query
         again = provider.suggest(track)
         self.assertIn("FLAGGED", again[0].evidence)
+
+    # -- two-stage lookup (various-artists soundtrack defect fix) -----------
+
+    def test_various_artists_soundtrack_resolves_via_album_only_fallback(self) -> None:
+        """The v0.2 defect: per-track artist (TWICE) vs cast-credited RG.
+
+        Stage 1 (album+artist) matches nothing; the album-only fallback
+        resolves the correct release group and flags the artist mismatch.
+        """
+        transport = FakeTransport(
+            [
+                _search_document(),  # stage 1: artist AND-term kills it
+                _search_document(
+                    _release_group(
+                        "rg-kdh",
+                        "KPop Demon Hunters: Soundtrack From the Netflix Film",
+                        "KPop Demon Hunters CastHUNTR/XSaja Boys",
+                        "2025-06-20",
+                    )
+                ),
+            ]
+        )
+        provider = self._provider(transport, min_query_interval_seconds=0.0)
+        track = TrackDescriptor(
+            path="/m/twice.ncm",
+            artist="TWICE",
+            album=(
+                "KPop Demon Hunters (Soundtrack from the Netflix Film"
+                " / Deluxe Version)"
+            ),
+        )
+        suggestions = provider.suggest(track)
+        self.assertEqual(len(suggestions), 1)
+        self.assertEqual(suggestions[0].tag_id, "era.2020s")
+        self.assertIn("FLAGGED", suggestions[0].evidence)
+        self.assertIn("not credited", suggestions[0].evidence)
+        # both stages ran; the album term was edition-stripped in both
+        self.assertEqual(len(transport.queries), 2)
+        stripped_album = "KPop Demon Hunters (Soundtrack from the Netflix Film"
+        self.assertEqual(transport.queries[0][0], stripped_album)
+        self.assertEqual(transport.queries[1][0], stripped_album)
+        self.assertIsNone(transport.queries[1][1])
+        # the flag survives caching; the rerun makes no network call
+        cached = self.cache.get(
+            "kpop demon hunters soundtrack from the netflix film deluxe version",
+            "twice",
+        )
+        self.assertTrue(cached.found)
+        self.assertIsNotNone(cached.suspicion)
+        again = provider.suggest(track)
+        self.assertIn("FLAGGED", again[0].evidence)
+        self.assertEqual(len(transport.queries), 2)
+
+    def test_album_only_fallback_still_requires_title_match(self) -> None:
+        """A different album entirely is never accepted on artist alone."""
+        transport = FakeTransport(
+            [
+                _search_document(),
+                _search_document(
+                    _release_group("rg-x", "Totally Other Record", "Someone", "2012")
+                ),
+            ]
+        )
+        provider = self._provider(transport, min_query_interval_seconds=0.0)
+        track = TrackDescriptor(path="/m/a.flac", artist="Somebody", album="My Album")
+        self.assertEqual(provider.suggest(track), [])
+        cached = self.cache.get("my album", "somebody")
+        self.assertFalse(cached.found)
+
+    def test_album_only_fallback_prefers_artist_compatible_entry(self) -> None:
+        transport = FakeTransport(
+            [
+                _search_document(),
+                _search_document(
+                    _release_group("rg-wrong", "Album", "Different Artist", "2010"),
+                    _release_group("rg-right", "Album", "Somebody", "2001"),
+                ),
+            ]
+        )
+        provider = self._provider(transport, min_query_interval_seconds=0.0)
+        track = TrackDescriptor(path="/m/a.flac", artist="Somebody", album="Album")
+        suggestions = provider.suggest(track)
+        self.assertEqual(suggestions[0].tag_id, "era.2000s")
+        self.assertNotIn("FLAGGED", suggestions[0].evidence)
+
+    def test_album_only_resolution_rejects_foreign_titles(self) -> None:
+        document = _search_document(
+            _release_group("rg-a", "Something Else Entirely", "Artist", "1990")
+        )
+        resolution = resolve_release_year_album_only(
+            document,
+            album="Known Album",
+            artist="Artist",
+            normalized_album="known album",
+            normalized_artist="artist",
+        )
+        self.assertFalse(resolution.lookup.found)
+
+    def test_album_only_resolution_accepts_title_variants(self) -> None:
+        document = _search_document(
+            _release_group(
+                "rg-b",
+                "Known Album: Expanded Edition",
+                "Other Cast",
+                "1995-07-01",
+            )
+        )
+        resolution = resolve_release_year_album_only(
+            document,
+            album="Known Album",
+            artist="Artist",
+            normalized_album="known album",
+            normalized_artist="artist",
+        )
+        self.assertTrue(resolution.lookup.found)
+        self.assertEqual(resolution.lookup.release_year, 1995)
+        self.assertIn("not credited", resolution.suspicion or "")
+
+    def test_stale_query_version_cache_rows_are_ignored(self) -> None:
+        """Rows cached under an older query construction never mask the fix.
+
+        This is the exact failure the v0.2 era-recall defect exposed: 16
+        ``found=false`` rows from the broken query would otherwise answer
+        every lookup forever.
+        """
+        # A row written by "query version 1" (the buggy query).
+        self.connection.execute(
+            "INSERT INTO release_date_cache (cache_key, normalized_album,"
+            " normalized_artist, found, queried_at, query_version)"
+            " VALUES (?, 'album', 'artist', 0, ?, ?)",
+            (cache_key("album", "artist"), NOWISH, QUERY_VERSION - 1),
+        )
+        self.connection.commit()
+        transport = FakeTransport(
+            [
+                _search_document(),
+                _search_document(
+                    _release_group("rg-fix", "Album", "Cast Credit", "2024")
+                ),
+            ]
+        )
+        provider = self._provider(transport, min_query_interval_seconds=0.0)
+        track = TrackDescriptor(path="/m/a.flac", artist="Artist", album="Album")
+        suggestions = provider.suggest(track)
+        # The stale no-match row was ignored: both stages re-ran and the
+        # fixed query resolved the work.
+        self.assertEqual(suggestions[0].tag_id, "era.2020s")
+        self.assertEqual(len(transport.queries), 2)
+        # ...and the row was overwritten under the current query version.
+        row = self.connection.execute(
+            "SELECT query_version, found FROM release_date_cache"
+            " WHERE cache_key = ?",
+            (cache_key("album", "artist"),),
+        ).fetchone()
+        self.assertEqual(row["query_version"], QUERY_VERSION)
+        self.assertEqual(row["found"], 1)
+
+    def test_query_version_is_current(self) -> None:
+        self.assertEqual(QUERY_VERSION, 2)
 
     def test_resolution_is_deterministic_score_order(self) -> None:
         document = _search_document(
@@ -383,6 +566,47 @@ class NetworkProviderTests(unittest.TestCase):
         self.assertEqual(len(transport.queries), 2)
 
 
+class _TransientThenOkHandler(BaseHTTPRequestHandler):
+    """503 on the first request per path, 200 afterwards; records timings."""
+
+    first_hit_503 = True
+    hit_times: list[float] = []
+
+    def do_GET(self):  # noqa: N802
+        type(self).hit_times.append(time.monotonic())
+        if len(type(self).hit_times) == 1:
+            body = b'{"error": "limit reached"}'
+            self.send_response(503)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        body = json.dumps(
+            {"release-groups": [{"id": "rg-ok", "title": "Album", "score": 100}]}
+        ).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *args) -> None:
+        pass
+
+
+class _AlwaysRateLimitedHandler(BaseHTTPRequestHandler):
+    def do_GET(self):  # noqa: N802
+        body = b'{"error": "limit reached"}'
+        self.send_response(503)
+        self.send_header("Retry-After", "1")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *args) -> None:
+        pass
+
+
 class _DelayedHandler(BaseHTTPRequestHandler):
     delay_seconds = 1.0
 
@@ -399,19 +623,6 @@ class _DelayedHandler(BaseHTTPRequestHandler):
         pass
 
 
-class _RateLimitedHandler(BaseHTTPRequestHandler):
-    def do_GET(self):  # noqa: N802
-        body = b'{"error": "limit reached"}'
-        self.send_response(503)
-        self.send_header("Retry-After", "1")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
-
-    def log_message(self, *args) -> None:
-        pass
-
-
 class RealTransportFailureTests(unittest.TestCase):
     """The urllib transport itself: timeouts, rate limits, offline errors."""
 
@@ -419,8 +630,14 @@ class RealTransportFailureTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.delay_server = ThreadingHTTPServer(("127.0.0.1", 0), _DelayedHandler)
         threading.Thread(target=cls.delay_server.serve_forever, daemon=True).start()
-        cls.rate_server = ThreadingHTTPServer(("127.0.0.1", 0), _RateLimitedHandler)
+        cls.rate_server = ThreadingHTTPServer(
+            ("127.0.0.1", 0), _AlwaysRateLimitedHandler
+        )
         threading.Thread(target=cls.rate_server.serve_forever, daemon=True).start()
+        cls.retry_server = ThreadingHTTPServer(
+            ("127.0.0.1", 0), _TransientThenOkHandler
+        )
+        threading.Thread(target=cls.retry_server.serve_forever, daemon=True).start()
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -445,10 +662,30 @@ class RealTransportFailureTests(unittest.TestCase):
         transport = MusicBrainzHttpTransport(
             base_url=f"http://127.0.0.1:{self.rate_server.server_port}",
             timeout_seconds=2.0,
+            max_attempts=2,
+            min_interval_seconds=0.05,
         )
         with self.assertRaises(NetworkLookupError) as caught:
             transport.search_release_groups(album="A", artist="B")
         self.assertIn("rate-limit", str(caught.exception))
+        self.assertEqual(transport.request_count, 2)
+
+    def test_transient_503_is_retried_and_then_succeeds(self) -> None:
+        """A 503 burst does not lose the lookup: paced retry succeeds."""
+        _TransientThenOkHandler.hit_times = []
+        transport = MusicBrainzHttpTransport(
+            base_url=f"http://127.0.0.1:{self.retry_server.server_port}",
+            timeout_seconds=2.0,
+            max_attempts=3,
+            min_interval_seconds=0.15,
+        )
+        document = transport.search_release_groups(album="Album", artist="Artist")
+        self.assertEqual(document["release-groups"][0]["id"], "rg-ok")
+        self.assertEqual(transport.request_count, 2)
+        self.assertEqual(transport.transient_retry_count, 1)
+        # Retries are paced too: >= min_interval between the two requests.
+        first, second = _TransientThenOkHandler.hit_times
+        self.assertGreaterEqual(second - first, 0.15)
 
     def test_connection_refused_is_offline_abstention(self) -> None:
         # Port 1 on loopback is not listening in this environment.
@@ -457,6 +694,8 @@ class RealTransportFailureTests(unittest.TestCase):
         )
         with self.assertRaises(NetworkLookupError):
             transport.search_release_groups(album="A", artist="B")
+        # Connection-level failures fail fast: one attempt, no retry.
+        self.assertEqual(transport.request_count, 1)
 
 
 if __name__ == "__main__":  # pragma: no cover

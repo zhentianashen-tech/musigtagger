@@ -1,7 +1,8 @@
 """SQLite schema tests: version marker, constraints, review states, backups.
 
-Schema v2 (MUSI-14) adds the additive ``release_date_cache`` table; the
-v1-focused assertions below all still hold on a v2 database.
+Schema v2 (MUSI-14) adds the additive ``release_date_cache`` table; schema
+v3 adds its ``query_version`` column (the defect-fix invalidation). The
+v1-focused assertions below all still hold on the current schema.
 """
 
 from __future__ import annotations
@@ -45,16 +46,16 @@ class SchemaTests(unittest.TestCase):
         return self.connection
 
     def test_version_marker(self) -> None:
-        self.assertEqual(SCHEMA_VERSION, 2)
+        self.assertEqual(SCHEMA_VERSION, 3)
         self.assertEqual(
             self.conn.execute("PRAGMA user_version").fetchone()[0], SCHEMA_VERSION
         )
         rows = self.conn.execute(
             "SELECT version, description FROM schema_migrations"
         ).fetchall()
-        self.assertEqual(len(rows), 2)
+        self.assertEqual(len(rows), 3)
         self.assertEqual(
-            [row["version"] for row in rows], [1, 2]
+            [row["version"] for row in rows], [1, 2, 3]
         )  # forward-only audit trail
 
     def test_expected_tables_exist(self) -> None:
@@ -69,7 +70,7 @@ class SchemaTests(unittest.TestCase):
         count = self.conn.execute(
             "SELECT COUNT(*) FROM schema_migrations"
         ).fetchone()[0]
-        self.assertEqual(count, 2)
+        self.assertEqual(count, 3)
 
     def test_v1_database_upgrades_in_place_and_keeps_v1_rows(self) -> None:
         """A v1 database gains the cache table without touching v1 data."""
@@ -98,10 +99,11 @@ class SchemaTests(unittest.TestCase):
                 connection.execute("PRAGMA user_version").fetchone()[0], 1
             )
 
-            self.assertEqual(apply_migrations(connection), 2)
+            self.assertEqual(apply_migrations(connection), SCHEMA_VERSION)
 
             self.assertEqual(
-                connection.execute("PRAGMA user_version").fetchone()[0], 2
+                connection.execute("PRAGMA user_version").fetchone()[0],
+                SCHEMA_VERSION,
             )
             # v1 rows survive untouched.
             row = connection.execute(
@@ -116,6 +118,51 @@ class SchemaTests(unittest.TestCase):
                 (NOW,),
             )
             connection.commit()
+            connection.close()
+
+    def test_v2_database_upgrades_to_v3_and_keeps_cache_rows(self) -> None:
+        """The MUSI-14 defect-fix migration adds query_version, keeps rows.
+
+        The stale no-match rows that masked the query bug are *not* deleted
+        (they stay inspectable); they are invalidated by their query_version
+        of 0 instead of by destruction.
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            database = Path(directory) / "library.sqlite3"
+            connection = connect(database)
+            from musigtagger.db import migrations as migrations_module
+
+            # Force the database to exactly v2.
+            scripts = (
+                migrations_module._read_migration("schema_v1.sql"),
+                migrations_module._read_migration("schema_v2.sql"),
+            )
+            connection.executescript(
+                "BEGIN;\n"
+                f"{scripts[0]}\n{scripts[1]}\n"
+                "INSERT INTO schema_migrations (version, description, applied_at)"
+                " VALUES (1, 'schema v1 (test)', '2026-11-17T00:00:00.000Z'),"
+                "        (2, 'schema v2 (test)', '2026-11-17T00:00:01.000Z');\n"
+                "PRAGMA user_version = 2;\n"
+                "COMMIT;\n"
+            )
+            # A row exactly like the 16 no-match rows the v0.2 rerun cached.
+            connection.execute(
+                "INSERT INTO release_date_cache (cache_key, normalized_album,"
+                " normalized_artist, found, queried_at)"
+                " VALUES ('k', 'album', 'artist', 0, ?)",
+                (NOW,),
+            )
+            connection.commit()
+
+            self.assertEqual(apply_migrations(connection), SCHEMA_VERSION)
+
+            # The stale row survives, tagged query_version 0 (= pre-versioning).
+            row = connection.execute(
+                "SELECT found, query_version FROM release_date_cache"
+                " WHERE cache_key = 'k'"
+            ).fetchone()
+            self.assertEqual((row["found"], row["query_version"]), (0, 0))
             connection.close()
 
     def test_newer_database_is_refused(self) -> None:
