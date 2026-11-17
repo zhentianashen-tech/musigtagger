@@ -123,12 +123,13 @@ only to prove the metric runs.
 
 ## 6. Baseline sequencing (binding)
 
-The full v0.2 baseline is **held** until the network release-date provider
-(MUSI-14) lands on `main`. The operator approved pulling a minimal
-MusicBrainz date lookup into Phase 1 (2026-11-17T11:09:46Z); era was
-structurally 0 under local-only sources, and hand-checking era twice would be
-wasted work. The local-only re-run queued earlier is **superseded**; the formal
-numbers come from one clean baseline with the date provider in the loop.
+The full v0.2 baseline **was held** until the network release-date provider
+(MUSI-14) landed on `main`; it has now been executed on `main` `5354663`. The
+operator approved pulling a minimal MusicBrainz date lookup into Phase 1
+(2026-11-17T11:09:46Z); era was structurally 0 under local-only sources, and
+hand-checking era twice would be wasted work. The local-only re-run queued
+earlier is **superseded**; the formal numbers come from one clean baseline
+with the date provider in the loop.
 
 The re-run uses the frozen input + frozen 47-track manifest + these pre-labels,
 with the hand-check worksheet generated from the real event stream.
@@ -138,6 +139,16 @@ A **post-fix audit run** predates v0.2 and is preserved at
 3 reject on orchestral cues, 93.6% instance precision/coverage, 85.7%
 work-level). It has no pre-labels/recall and no date provider; it is evidence,
 not the v0.2 baseline.
+
+**Baseline executed 2026-11-17** on `main` `5354663` (MUSI-14 merge of
+`edc827d`). Result: precision 93.6% (44/47), coverage 93.6% (44/47), batch
+completion 100%, conformance 100% — **all four approved quality bars pass**.
+Safety remains unverified (pending MUSI-8). Era recall is **unmeasured**: this
+runtime has no route to `musicbrainz.org`, so 16/16 lookup pairs failed and
+47/47 tracks abstained with logged `NetworkLookupError` (zero hangs). Overall
+report-only recall is 31.9% instance / 30.0% work-level; the date-resolved
+forecast is 65.9% / 65% if all 14 works resolve. Full evidence:
+`artifacts/2026-11-17-v0.2-baseline/RUN.md`.
 
 ## 7. Decisions resolved (operator, 2026-11-17)
 
@@ -179,6 +190,9 @@ There are no open evaluation-side questions blocking the baseline.
 - 2026-11-17 11:51Z — operator sign-off: thresholds approved as-is, v0.2
   defaults accepted, taxonomy option (a) deferred post-acceptance, origin
   accepted as a Phase 2/3 gap. No baseline run.
+- 2026-11-17 12:00Z — v0.2 baseline executed on `main` 5354663; four approved
+  quality bars pass, safety unverified (MUSI-8), era recall unmeasured
+  (runtime egress). See `artifacts/2026-11-17-v0.2-baseline/RUN.md`.
 
 ## 9. What was deliberately not done
 

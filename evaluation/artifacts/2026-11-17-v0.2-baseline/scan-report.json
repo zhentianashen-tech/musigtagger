@@ -1,0 +1,43 @@
+{
+  "input_root": "/test-data/music-working/eval-input-ncm-remux",
+  "indexed": 47,
+  "discovered_audio_files": 47,
+  "failures": [],
+  "batch_status": "completed",
+  "with_title": 47,
+  "with_artist": 47,
+  "with_album": 47,
+  "with_genre": 0,
+  "with_year": 0,
+  "providers": [
+    {
+      "provider": "local",
+      "run_id": "v0.2-local",
+      "suggestions": 47,
+      "failures": 0,
+      "failure_sample": []
+    },
+    {
+      "provider": "network",
+      "run_id": "v0.2-network",
+      "suggestions": 0,
+      "failures": 47,
+      "failure_sample": [
+        {
+          "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,Audrey Nuna - Golden (1).mp3",
+          "reason": "NetworkLookupError: musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>"
+        },
+        {
+          "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Acapella).mp3",
+          "reason": "NetworkLookupError: musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>"
+        },
+        {
+          "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Instrumental).mp3",
+          "reason": "NetworkLookupError: lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt"
+        }
+      ]
+    }
+  ],
+  "network_enabled": true,
+  "network_attempted_pairs": 16
+}

@@ -67,3 +67,4 @@ album/cover on 47/47, genre/date on 0/47). The 47-track list is frozen in
 | `../fixtures/prelabels-v0.2-validation.json` | Validation record: 0 issues, tag ids checked against taxonomy v1.0.0 |
 | `2026-11-17-v0.2-prep-report.md` | v0.2 prep report: labels, date research, open questions, baseline hold |
 | `2026-11-17-operator-signoff.md` | Operator sign-off: thresholds approved as-is, defaults accepted, taxonomy deferred, origin gap accepted |
+| `2026-11-17-v0.2-baseline/` | Formal v0.2 baseline on main 5354663: report, events, worksheet, hand-check, egress evidence, RUN.md |
