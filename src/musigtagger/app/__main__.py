@@ -59,7 +59,14 @@ def _common_options(parser: argparse.ArgumentParser) -> None:
         "--scanner",
         dest="scanner_spec",
         default=argparse.SUPPRESS,
-        help="scanner as 'module:Attribute' (default: bundled mutagen scanner)",
+        help="scanner as 'module:Attribute' (default: the engine library scanner)",
+    )
+    parser.add_argument(
+        "--no-network",
+        dest="no_network",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="disable the MusicBrainz release-date provider (local metadata only)",
     )
     parser.add_argument(
         "--ncm-converter",
@@ -164,6 +171,8 @@ def _args_to_mapping(args: argparse.Namespace) -> dict[str, object]:
         value = getattr(args, name, None)
         if value is not None:
             values[name] = value
+    if getattr(args, "no_network", False):
+        values["network_enabled"] = False
     if getattr(args, "page_size", None) is not None:
         values["page_size"] = args.page_size
     protected = getattr(args, "protected_roots", None)
