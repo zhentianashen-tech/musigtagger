@@ -33,10 +33,15 @@ the recommendation attached to the v0.2 baseline report.
 
 ## Networked date check — runbook (one command)
 
-Run on any machine with egress to `musicbrainz.org`, from the repo root on
-`main` after `uv sync`:
+Run on any machine with egress to `musicbrainz.org`, from a **`main` checkout**
+(which carries the MUSI-14 provider). The check tool lives on the evaluation
+branch, so copy just that file into the `main` checkout first:
 
 ```bash
+git fetch origin
+git checkout main
+git checkout origin/agent/evaluation-review-agent/956ae907db4b -- \
+  evaluation/tools/networked_date_check.py
 PYTHONPATH=src python evaluation/tools/networked_date_check.py \
   --input /test-data/music-working/eval-input-ncm-remux \
   --taxonomy taxonomy \
@@ -44,6 +49,10 @@ PYTHONPATH=src python evaluation/tools/networked_date_check.py \
   --prelabels evaluation/fixtures/prelabels-v0.2-works.json \
   --out networked-date-check.json
 ```
+
+(If the evaluation branch has already been merged to `main`, the checkout step
+is a no-op. The manifest/prelabel fixtures also live on that branch; copy them
+with the tool if the merge has not happened.)
 
 - It runs the real `MusicBrainzReleaseYearProvider` over the frozen set:
   16 unique `(album, artist)` pairs, ~16 paced queries, cached in the local
