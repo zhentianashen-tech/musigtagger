@@ -21,7 +21,7 @@ from musigtagger.ncm import (
     main,
 )
 
-CORE_KEY = b"hzHRAmso5kIfBYKU"
+CORE_KEY = b"hzHRAmso5kInbaxW"
 METADATA_KEY = b"#14ljk_!\\]&0U<'("
 COVER = b"\x89PNG\r\n\x1a\n" + b"synthetic-cover"
 FLAC_STREAMINFO = (
@@ -58,7 +58,10 @@ def encrypt_audio(data: bytes, key: bytes) -> bytes:
 
 def make_ncm(audio: bytes, audio_format: str, cover: bytes = COVER) -> bytes:
     key = b"synthetic-track-key"
-    encrypted_key = encrypt_aes(b"neteasecloudmusic" + key, CORE_KEY)
+    encrypted_key = bytes(
+        byte ^ 0x64
+        for byte in encrypt_aes(b"neteasecloudmusic" + key, CORE_KEY)
+    )
     metadata = json.dumps(
         {
             "musicName": "Synthetic title",
@@ -67,9 +70,10 @@ def make_ncm(audio: bytes, audio_format: str, cover: bytes = COVER) -> bytes:
             "format": audio_format,
         }
     ).encode()
-    encrypted_metadata = base64.b64encode(
-        b"163 key(Don't modify):"
-        + encrypt_aes(b"music:" + metadata, METADATA_KEY)
+    encrypted_metadata = bytes(
+        byte ^ 0x63
+        for byte in b"163 key(Don't modify):"
+        + base64.b64encode(encrypt_aes(b"music:" + metadata, METADATA_KEY))
     )
     return b"".join(
         [

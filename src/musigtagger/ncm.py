@@ -26,8 +26,10 @@ from mutagen.id3 import APIC, TALB, TIT2, TPE1, ID3
 from .contracts import TrackDescriptor
 
 _MAGIC = b"CTENFDAM"
-_CORE_KEY = b"hzHRAmso5kIfBYKU"
+_CORE_KEY = b"hzHRAmso5kInbaxW"
 _METADATA_KEY = b"#14ljk_!\\]&0U<'("
+_KEY_XOR = 0x64
+_METADATA_XOR = 0x63
 _KEY_PREFIX = b"neteasecloudmusic"
 _METADATA_PREFIX = b"163 key(Don't modify):"
 _JSON_PREFIX = b"music:"
@@ -139,10 +141,13 @@ def _parse_metadata(encrypted: bytes) -> NCMMetadata:
     if not encrypted:
         return NCMMetadata()
     try:
-        decoded = base64.b64decode(encrypted, validate=True)
+        decoded = bytes(byte ^ _METADATA_XOR for byte in encrypted)
         if not decoded.startswith(_METADATA_PREFIX):
             raise NCMFormatError("invalid NCM metadata prefix")
-        plaintext = _decrypt_aes(decoded[len(_METADATA_PREFIX) :], _METADATA_KEY)
+        encrypted_json = base64.b64decode(
+            decoded[len(_METADATA_PREFIX) :], validate=True
+        )
+        plaintext = _decrypt_aes(encrypted_json, _METADATA_KEY)
         if not plaintext.startswith(_JSON_PREFIX):
             raise NCMFormatError("invalid NCM metadata JSON prefix")
         raw = json.loads(plaintext[len(_JSON_PREFIX) :].decode("utf-8"))
@@ -213,6 +218,7 @@ def decode(ncm_path: str | os.PathLike[str]) -> DecodedTrack:
     _, offset = _take(data, offset, 2, "header gap")
     key_length, offset = _read_u32(data, offset)
     encrypted_key, offset = _take(data, offset, key_length, "key field")
+    encrypted_key = bytes(byte ^ _KEY_XOR for byte in encrypted_key)
     key_data = _decrypt_aes(encrypted_key, _CORE_KEY)
     if not key_data.startswith(_KEY_PREFIX):
         raise NCMFormatError("invalid NCM key prefix (core key did not decrypt)")
