@@ -44,17 +44,25 @@ class SchemaVersionError(SchemaError):
         )
 
 
-def connect(database: str | Path) -> sqlite3.Connection:
+def connect(
+    database: str | Path, *, check_same_thread: bool = True
+) -> sqlite3.Connection:
     """Open a connection with the settings this schema requires.
 
     Foreign keys are per-connection in SQLite, so every code path must come
     through this helper. A file database's parent directory is created.
+
+    ``check_same_thread=False`` is for the application layer's local web server,
+    which serialises access with its own lock and serves requests from a thread
+    pool; it is never a licence to share a connection without synchronisation.
     """
     database_text = str(database)
     if database_text != ":memory:":
         path = Path(database_text)
         path.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(database_text)
+    connection = sqlite3.connect(
+        database_text, check_same_thread=check_same_thread
+    )
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     return connection
@@ -115,9 +123,11 @@ def apply_migrations(connection: sqlite3.Connection) -> int:
     return current
 
 
-def initialize_database(database: str | Path) -> sqlite3.Connection:
+def initialize_database(
+    database: str | Path, *, check_same_thread: bool = True
+) -> sqlite3.Connection:
     """Open ``database``, migrate it to the current schema, and return it."""
-    connection = connect(database)
+    connection = connect(database, check_same_thread=check_same_thread)
     try:
         apply_migrations(connection)
     except Exception:

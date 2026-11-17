@@ -5,15 +5,15 @@ filenames and embedded tags, proposes taxonomy tags, lets you accept / edit /
 reject them in a minimal local web app, and applies accepted tags with a
 mandatory backup and undo.
 
-**This repository currently contains the Phase 1 scaffold and the shared
-contracts only.** It has no suggestion logic, no review UI, and no tag-writing
-code yet — those are separate deliverables (`CONTRACTS.md` §7). The point of
-this layer is to freeze the interfaces every later component builds against.
+The repository now contains the Phase 1 scaffold and shared contracts, the
+frozen taxonomy, and the **application layer**: the review web app and the only
+code path allowed to write audio files (`docs/APP.md`). The engine (scanner +
+metadata provider) is a separate deliverable (`MUSI-7`).
 
 - **Contracts:** [`CONTRACTS.md`](CONTRACTS.md)
+- **Application layer / operator guide:** [`docs/APP.md`](docs/APP.md)
 - **Taxonomy data format:** [`taxonomy/FORMAT.md`](taxonomy/FORMAT.md)
-- **Current taxonomy:** `taxonomy/taxonomy-0.1.0-draft.json` (v0; v1.0.0 lands
-  as a new file with no schema change)
+- **Current taxonomy:** `taxonomy/taxonomy-1.0.0.json` (pinned by the app)
 
 ## Requirements
 
@@ -37,24 +37,27 @@ pip install -e '.[dev]'    # adds pytest
 
 ## Run the tests
 
-The committed tests use only the standard library, so they run without the dev
-extra:
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-If you installed the dev extra, `pytest` collects the same tests:
-
-```bash
-pytest
-```
-
-Without installing the package, point `PYTHONPATH` at `src/`:
+The test suite uses only the standard library (a fake tag codec stands in for
+`mutagen`), so it runs without the dev extra. The real-container tests skip with
+an explicit message when `mutagen` is not installed:
 
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -v
+# or, with the dev extra installed:
+pytest
 ```
+
+## Quick start (application layer)
+
+```bash
+pip install -e .        # pins mutagen==1.48.1
+python -m musigtagger.app --library-root ~/Music/import scan
+python -m musigtagger.app serve     # http://127.0.0.1:8765/
+```
+
+The app scans, stores suggestions, lets you accept/edit/reject in the browser,
+applies reviewed tags with a verified backup of every file, and undoes a batch
+byte-for-byte. Details, safety design, and limits: [`docs/APP.md`](docs/APP.md).
 
 ## Quick start (contracts only)
 
@@ -63,11 +66,11 @@ Load the pinned taxonomy, inspect it, and validate tag references:
 ```python
 from musigtagger.contracts import TaxonomyLoader
 
-taxonomy = TaxonomyLoader.load("taxonomy", version="0.1.0-draft")
+taxonomy = TaxonomyLoader.load("taxonomy", version="1.0.0")
 print(taxonomy.version, len(taxonomy), taxonomy.facet_ids)
 print(taxonomy.tag("genre.hip-hop").canonical_label)   # "Hip-hop"
-print(taxonomy.tag("genre.hip-hop").display_label("zh"))  # "嘻哈"
-taxonomy.validate_tag_ids(["genre.rock.progressive-rock", "era.1990s"])
+print(taxonomy.tag("genre.hip-hop").display_label("ja"))  # "ヒップホップ"
+taxonomy.validate_tag_ids(["genre.hip-hop", "era.1990s"])
 ```
 
 Create the library database (schema v1):
@@ -87,12 +90,15 @@ The migrated schema includes `tracks`, `suggestions` (five review states),
 
 ```
 CONTRACTS.md                 taxonomy / engine / application / observability contracts
+docs/APP.md                  application layer: workflow, safety design, limits
 taxonomy/
   FORMAT.md                  taxonomy data format (schema_version 1)
-  taxonomy-0.1.0-draft.json  v0 vocabulary from Taxonomy Proposal v0
+  taxonomy-1.0.0.json        frozen Phase 1 vocabulary (the pinned version)
+  taxonomy-0.1.0-draft.json  v0 vocabulary, kept for loader/tooling history
 src/musigtagger/
   contracts/                 immutable value types, provider protocol, taxonomy loader
   db/                        SQLite schema v1 + forward-only migration runner
+  app/                       review UI, write path, backups/undo, events, CLI
 tests/                       standard-library test suite
 ```
 
@@ -100,10 +106,10 @@ tests/                       standard-library test suite
 
 | Piece | Where | Status |
 |---|---|---|
-| Repo scaffold, contracts v1, taxonomy loader, schema v1 | this issue (MUSI-6) | delivered |
-| Taxonomy v1.0.0 data | MUSI-5 | parallel |
-| Library scanner + metadata suggestion provider | MUSI-7 | next stage |
-| Review web app + safe tag write / backup / undo | MUSI-8 | next stage |
+| Repo scaffold, contracts v1, taxonomy loader, schema v1 | MUSI-6 | delivered |
+| Taxonomy v1.0.0 data | MUSI-5 | delivered |
+| Library scanner + metadata suggestion provider | MUSI-7 | in progress; plugs into `--scanner` / `--provider` |
+| Review web app + safe tag write / backup / undo | MUSI-8 | delivered (this layer) |
 
 Phase 2 (audio analysis) and Phase 3 (network enrichment) add providers behind
 the same `SuggestionProvider` interface. They require no change to these
@@ -112,7 +118,10 @@ contracts; `TrackDescriptor.features` is the reserved Phase 2 seam.
 ## Safety invariants (apply to all later code)
 
 - The engine never writes files; the application is the sole writer.
-- No tag write batch starts without a stored backup of prior tag state.
-- Undo restores prior tag frames; it is not a best-effort re-tag.
+- No tag write batch starts without a verified backup of every target file.
+- Undo restores prior bytes atomically and re-hashes the result; it is not a
+  best-effort re-tag.
 - Applied tags must exist in the pinned taxonomy version.
+- Read-only source roots (default `/test-data/music-source`) are never written,
+  not even by tests.
 - Schema changes after v1 are escalated before merge.

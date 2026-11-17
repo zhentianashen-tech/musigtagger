@@ -17,6 +17,7 @@ htmlcov/
 *.sqlite3-shm
 *.db
 backups/
+events.jsonl
 
 # Editors / OS
 .DS_Store
