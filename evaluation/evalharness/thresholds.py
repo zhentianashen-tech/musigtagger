@@ -1,6 +1,7 @@
-"""Proposed acceptance thresholds (Evaluation Plan v0.1 §3).
+"""Operator-approved acceptance thresholds (Evaluation Plan v0.1 §3).
 
-These are *proposals for operator approval* — nothing here is settled. Every
+Approved **as-is** by the operator on 2026-11-17 (MUSI-9 comment
+``01a1e957-d274-7627-a3ae-33d40e231a98``); no value changed at approval. Every
 generated report carries ``STATUS_LABEL`` next to each threshold comparison.
 """
 
@@ -9,15 +10,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 #: Required label on every threshold comparison in every report.
-STATUS_LABEL = "PROPOSED — pending human sign-off"
+STATUS_LABEL = "APPROVED — operator sign-off 2026-11-17"
 
-#: Plan version this threshold set belongs to.
-PLAN_VERSION = "0.1"
+#: Plan version this threshold set runs under (v0.2 amends ground truth only;
+#: the threshold values are the v0.1 set, approved unchanged).
+PLAN_VERSION = "0.2"
 
 
 @dataclass(frozen=True)
 class Thresholds:
-    """The plan-v0.1 proposed acceptance bar."""
+    """The operator-approved acceptance bar (values unchanged from the v0.1 proposal)."""
 
     suggestion_precision_min: float = 0.75  # overall; per-category reported with counts
     coverage_min: float = 0.85  # tracks receiving >= 1 usable tag

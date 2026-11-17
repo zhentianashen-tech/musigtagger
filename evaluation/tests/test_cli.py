@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 
 from evalharness.cli import main
+from evalharness.thresholds import STATUS_LABEL
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 TAXONOMY_DIR = REPO_ROOT / "taxonomy"
@@ -107,7 +108,7 @@ class CliReportTests(unittest.TestCase):
         exit_code = main(self._args())
         self.assertEqual(exit_code, 0)
         text = self.report.read_text(encoding="utf-8")
-        self.assertIn("PROPOSED — pending human sign-off", text)
+        self.assertIn(STATUS_LABEL, text)
         self.assertIn("Suggestion precision per category", text)
         self.assertIn("| genre | 1 | 1 | 1 | 0 | 0 | 100.0% |", text)
         self.assertIn("✅ pass", text)

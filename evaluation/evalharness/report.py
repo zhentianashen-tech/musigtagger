@@ -1,6 +1,6 @@
 """Markdown evaluation report renderer (Evaluation Plan v0.1 §4).
 
-Every threshold comparison is labeled as a proposal pending human sign-off.
+Every threshold comparison carries the operator-approval status.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ def _pct(value: float | None) -> str:
 def _verdict(passed: bool | None) -> str:
     if passed is None:
         return f"⚠️ {NOT_COMPUTED} ({STATUS_LABEL})"
-    return ("✅ meets" if passed else "❌ fails") + f" proposed threshold ({STATUS_LABEL})"
+    return ("✅ meets" if passed else "❌ fails") + f" threshold ({STATUS_LABEL})"
 
 
 def _meets(value: float | None, minimum: float) -> bool | None:
@@ -92,12 +92,12 @@ def render_report(
         f"- Taxonomy pinned: `{taxonomy_version}`"
         + (f" — ⚠️ {taxonomy_error}" if taxonomy_error else ""),
         "",
-        f"> **All thresholds below are proposals — {STATUS_LABEL}.** "
-        "Nothing in this report settles an acceptance bar.",
+        f"> **All thresholds below are operator-approved — {STATUS_LABEL}.** "
+        "The values were approved unchanged on 2026-11-17.",
         "",
         "## Gating summary",
         "",
-        "| Metric | Measured | Proposed threshold | Verdict |",
+        "| Metric | Measured | Approved threshold | Verdict |",
         "|---|---|---|---|",
         (
             f"| Suggestion precision (overall) | {_pct(quality.overall.precision)} "
@@ -152,7 +152,7 @@ def render_report(
             f"⚠️ **Ground truth missing** — no hand-check decisions were supplied, "
             f"so precision is {NOT_COMPUTED} and this report cannot pass. "
             "The external verifying agent's hand-check log is the ground truth "
-            "(plan v0.1 §2).",
+            "(plan v0.1 §2 / v0.2).",
             "",
         ]
     lines += [
@@ -256,7 +256,7 @@ def render_report(
         )
     lines += [
         "",
-        "Proposed thresholds: zero writes to the source library, zero corruption "
+        "Approved thresholds: zero writes to the source library, zero corruption "
         f"incidents, undo verified on every sampled case ({STATUS_LABEL}).",
         "",
         "## 7. Cross-check: evaluator decisions vs app review outcomes",

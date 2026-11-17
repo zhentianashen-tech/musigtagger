@@ -65,5 +65,7 @@ PYTHONPATH=evaluation:src uv run --no-project python -m evalharness safety-demo
 | `--batches` | JSON batch/run records | for batch completion | engine runner / application |
 | `--scan-report` | JSON scan summary | for coverage denominator | application scan |
 
-All thresholds in every generated report are **proposals pending human
-sign-off** (operator decision, MUSI-4 thread).
+All thresholds in every generated report carry the **operator sign-off**
+(approved unchanged 2026-11-17; see
+`artifacts/2026-11-17-operator-signoff.md`). Expected-tag recall remains
+report-only until a separate threshold is approved.

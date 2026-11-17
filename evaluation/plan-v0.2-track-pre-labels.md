@@ -1,6 +1,7 @@
 # Evaluation Plan v0.2 — track-level pre-labels (IN FORCE)
 
 **Status: IN FORCE — approved 2026-11-17T11:09:46Z.**
+Thresholds approved **as-is** 2026-11-17 (see `artifacts/2026-11-17-operator-signoff.md`); the acceptance bar values are unchanged. Recall remains report-only.
 Operator approval recorded on MUSI-9 (comment `01a1e932-dbda-7ebc-9366-d867650d4007`):
 "approve, and label per work with per-instance propagation." The leader recorded
 the plan in force at 11:11:39Z (comment `01a1e934-9514-7c82-87be-ab3a70bbc5a0`).
@@ -138,27 +139,31 @@ A **post-fix audit run** predates v0.2 and is preserved at
 work-level). It has no pre-labels/recall and no date provider; it is evidence,
 not the v0.2 baseline.
 
-## 7. Remaining open questions (not blocking prep)
+## 7. Decisions resolved (operator, 2026-11-17)
 
-Answered so far: plan approval (yes), label shape (per work + propagation),
-date lookup (approved, MUSI-14), baseline sequencing (after MUSI-14).
+The operator answered on MUSI-9 (`01a1e957-d274-7627-a3ae-33d40e231a98`); the
+full record is `artifacts/2026-11-17-operator-signoff.md`.
 
-Still open for the operator/leader:
+1. **Acceptance thresholds — approved as-is, values unchanged.** Precision
+   ≥75%, coverage ≥85%, batch completion 100%, taxonomy conformance 100%,
+   safety zero writes / zero corruption / undo verified. Recall remains
+   report-only; no recall threshold was approved.
+2. **v0.2 reporting details — defaults accepted ("as it is").** Genre
+   mandatory; era/origin where defensible; mood/activity optional; personal
+   excluded. Parent-only matches reported separately, never exact. No external
+   auditor named: the evaluator self-audits a sample and records the
+   disclosure. Date conflicts: earliest official release year wins; a
+   MusicBrainz mismatch is reported, not silently accepted.
+3. **Taxonomy gaps — option (a).** Keep taxonomy v1.0.0 for this baseline;
+   ballad and score works stay mapped to `genre.k-pop` / `genre.orchestral`
+   with the gap recorded. A separate taxonomy issue (ballad / soundtrack /
+   film-score) is a **post-acceptance follow-up**, not opened now.
+4. **Origin — option (a).** Accept origin as a Phase 2/3 gap for this
+   baseline; no Phase-1 origin/language provider. Expected-tag recall will
+   understate the engine on origin; known and accepted, not a defect and not a
+   gate.
 
-1. **Mandatory facets (old Q3).** Proposed and used: genre mandatory; era and
-   origin where defensible; mood/activity optional; personal excluded.
-   Not explicitly answered; labels follow the proposed defaults.
-2. **Parent-only genre match (old Q4).** Proposed and used: report separately
-   as parent-level, never counted as exact. Not explicitly answered.
-3. **Independent audit sample (old Q5).** Proposed 5–10 rows; no auditor named.
-4. **Taxonomy gaps surfaced by this set.** No `genre.ballad`,
-   `genre.soundtrack`, or film-score tag; `genre.orchestral` is the closest
-   valid tag for score cues. Routing is the leader/designer's call; taxonomy
-   was not changed.
-5. **Release-date authority.** MUSI-14 uses MusicBrainz and "earliest release
-   year for the work." If MusicBrainz disagrees with the label (e.g. treats a
-   soundtrack re-release as the original), the mismatch must be reported, not
-   silently accepted. The label's audit year is canonical for now.
+There are no open evaluation-side questions blocking the baseline.
 
 ## 8. Change log
 
@@ -171,6 +176,9 @@ Still open for the operator/leader:
   clean; plan frozen in force. Baseline not run.
 - 2026-11-17 11:30Z — recall harness implemented (`--prelabels`, report 5b)
   and smoke-tested; 28 harness tests pass. No baseline run.
+- 2026-11-17 11:51Z — operator sign-off: thresholds approved as-is, v0.2
+  defaults accepted, taxonomy option (a) deferred post-acceptance, origin
+  accepted as a Phase 2/3 gap. No baseline run.
 
 ## 9. What was deliberately not done
 
