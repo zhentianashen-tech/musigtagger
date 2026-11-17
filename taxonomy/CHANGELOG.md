@@ -9,7 +9,41 @@ The format of this file: one section per released version, newest first.
 ## 1.0.0 — 2026-11-17 (frozen)
 
 First frozen version. Supersedes `0.1.0-draft` (Taxonomy Proposal v0, MUSI-3).
-Encoded as versioned data at `taxonomy/taxonomy.json` (`$.version` is the pin target).
+Encoded as versioned data at `taxonomy/taxonomy-1.0.0.json` (`$.version` is the pin target).
+Document schema is owned by `taxonomy/FORMAT.md` and the
+`musigtagger.contracts.taxonomy` loader; this file is data, not a format spec.
+
+### Loader-alignment re-encode (2026-11-17, same day; encoding only, no vocabulary change)
+
+The first commit encoded the document in the designer's own README layout, which the
+scaffold's `TaxonomyLoader` could not read. Re-encoded to `FORMAT.md` (schema_version 1)
+after leader integration review. Version stays `1.0.0`: the encoding changed, the vocabulary
+did not (same 160 tags, same rules). Changes:
+
+- **Filename** `taxonomy.json` → `taxonomy-1.0.0.json` (loader discovers `taxonomy-*.json`).
+- **Document `name` added** (required, non-empty); `id` kept as a document extension.
+- **Facet fields mapped** to the loader contract: `key`→`id`, `question`→`description`, short
+  `label` added; `structure`/`depth_cap`/`single_parent` folded into `hierarchy` + `max_depth`
+  (tree→`hierarchy: true, max_depth: 2` for genre/origin; flat facets `max_depth: 1`;
+  single-parent is enforced structurally by the loader, no longer restated);
+  `phase1_availability` full/partial→`phase1_available: true`, none→`false`.
+- **Tag ids `/` → `.`** (`genre/blues` → `genre.blues`, `era/1950s` → `era.1950s`; parents
+  updated): the loader's tag-id regex requires dot-namespacing under the facet id. This was
+  not in the reviewer's fix list but is required to load.
+- **`canonical_label` added** per tag, set to `labels[native_language]` (the D3 rule itself);
+  `native_language` retained as an extension field for provenance.
+- **Aliases re-typed** `[{label, language}]` → plain strings (loader contract; supersedes R5 —
+  the alias language annotation carried no matching semantics, and the competing-terms rule
+  is already expressed by native-canonical labels).
+- **One alias dropped**: `contemporary r&b` on `genre.contemporary-rhythm-and-blues`
+  case-insensitively duplicated its own canonical label (`Contemporary R&B`), which the
+  loader rejects and was redundant as a normalization input.
+- **`naming_rules` updated** to defer to FORMAT.md: `tag_id_pattern` `<facet-id>.<slug>`;
+  language-value convention aligned to the format's flat form `origin.lang-<iso639-3>`
+  (pattern `^origin\.lang-[a-z]{3}$`); `personal` exception prefix reworded for dot ids.
+- **README slimmed** to a pointer: format authority deferred to `FORMAT.md`; this directory
+  documents only the vocabulary-policy extensions. `Taxonomy.dumps()` round-trips only
+  loader-known keys, so the committed JSON file remains the canonical source.
 
 ### Human decisions applied
 
@@ -28,9 +62,10 @@ Encoded as versioned data at `taxonomy/taxonomy.json` (`$.version` is the pin ta
 
 ### Structure
 
-- Tags carry: `id` (`<facet>/<slug>`), explicit `facet`, `parent` (genre/origin only, depth ≤ 2,
+- Tags carry: `id` (originally `<facet>/<slug>`, re-encoded to `<facet>.<slug>` in the
+  loader-alignment pass above), explicit `facet`, `parent` (genre/origin only, depth ≤ 2,
   single parent), `native_language`, `labels` (per-language display variants), `aliases`
-  (`{label, language}`, each mapping to exactly one canonical tag).
+  (originally `{label, language}`, re-typed to plain strings in the same pass).
 - Facets carry: structure (`tree`/`flat`/`open`), `depth_cap`, cardinality guardrails, and
   per-phase availability marks (`phase1_availability` + Phase-2/Phase-3 outlook notes).
 - `label_policy`, `naming_rules`, `versioning_policy` blocks encode v0 §3/§5 rules in
@@ -58,7 +93,9 @@ Encoded as versioned data at `taxonomy/taxonomy.json` (`$.version` is the pin ta
   `labels`.
 - **R5 — `aliases` typed as `{label, language}` objects** rather than bare strings, so a
   competing term's language is recorded (required to express D3 generally, e.g. a Spanish
-  synonym aliasing an English-canonical tag).
+  synonym aliasing an English-canonical tag). *Superseded in the loader-alignment pass:
+  aliases are bare strings per FORMAT.md; the language annotation carried no matching
+  semantics.*
 
 ### Rules carried over from v0 unchanged
 
@@ -80,12 +117,14 @@ deliberately remains absent from the file; adding it for Phase 2 would be a MINO
 ### Compatibility implications for downstream
 
 - Engine (MUSI-7) and application (MUSI-8) pin `1.0.0` and refuse other versions.
-- Scaffold loader (MUSI-6) must accept scheme-generated `origin/language:<iso-639-3>` ids in
-  addition to enumerated tags, and must expose `$.version`.
+- Scaffold loader (MUSI-6) must accept scheme-generated `origin.lang-<iso639-3>` ids in
+  addition to enumerated tags at validation time, and must expose `$.version`. (Exposure
+  is delivered; runtime acceptance of scheme-valid language ids remains open — enumerated
+  `origin.*` tags only cover regions, not languages.)
 - Migration trustworthiness requires tag stores to record the taxonomy version in force at
   write time (routed to the contracts spec).
 - The Rap→hip-hop resolution means ID3 genre strings "Rap", "Hip Hop", "Hip-Hop/Rap" all
-  normalize to `genre/hip-hop`; normalizers should treat them as one concept.
+  normalize to `genre.hip-hop`; normalizers should treat them as one concept.
 
 ## 0.1.0-draft — 2026-11-17
 

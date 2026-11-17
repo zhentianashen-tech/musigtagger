@@ -1,81 +1,47 @@
 # Taxonomy
 
 Music Tagger tag taxonomy — versioned structured data. **Current version: `1.0.0` (frozen).**
-Downstream layers (taxonomy loader, engine, application, evaluation) must pin `1.0.0` and refuse
-to run against versions outside their supported set.
+Downstream layers (loader, engine, application, evaluation) must pin `1.0.0` via
+`TaxonomyLoader.load(directory, version='1.0.0')` and refuse versions outside their
+supported set.
 
-This directory is data and specification only. The loader/validator implementation lives with the
-scaffold/contracts work (MUSI-6); engine internals do not belong here.
+This directory is data and policy only. Loader/schema implementation lives in
+`src/musigtagger/contracts/taxonomy.py` (scaffold, MUSI-6).
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `taxonomy.json` | The taxonomy: version, facets, tags, labeling/naming/versioning rules. |
+| `taxonomy-1.0.0.json` | The v1.0.0 taxonomy document. Named per the loader's `taxonomy-<version>.json` discovery pattern. |
 | `CHANGELOG.md` | Version history; every change traceable to a human decision or a documented refinement. |
 
-## Format choice: JSON
+## Document format
 
-JSON was chosen over YAML because: it needs no third-party parser (Python `json` is stdlib, and
-the approved stack is Python), it has exactly one canonical form, and the version string must be
-machine-readable — `$.version` is the pinned value.
+The schema of these files is **owned by [`FORMAT.md`](FORMAT.md)** (schema_version 1) and
+enforced by `musigtagger.contracts.taxonomy`. This README does not restate it. The format
+choice itself (canonical committed form = JSON, one document per frozen version) is also
+defined there.
 
-Top-level shape (`schema_version` describes the *file format*, so format tweaks do not consume a
-taxonomy version bump):
+## Vocabulary policy extensions
 
-```
-schema_version      1 — format of this file
-id                  "music-tagger-taxonomy"
-version             "1.0.0"  ← the string downstream must pin
-status              "frozen" | "draft"
-supersedes          "0.1.0-draft"
-label_policy        native-language-canonical rules (see below)
-naming_rules        id pattern, slug charset, near-duplicate gates, parent imputation
-versioning_policy   bump rules + pinning requirement
-facets[]            six facets: key, structure, depth_cap, cardinality, availability marks
-tags[]              tag records (see below)
-```
+Beyond the loader-known fields, each document carries three policy blocks that the loader
+tolerates as extensions but does not interpret. They are the designer-owned semantics of
+the vocabulary:
 
-Tag record:
+- `label_policy` — native-original-language canonical rule, alias handling, unmapped-input
+  review path. The loader's `canonical_label_policy: "native-original-language"` field is
+  the machine-readable marker of this policy.
+- `naming_rules` — slug charset, near-duplicate gates, minimum specificity, broad-before-
+  narrow, query-time parent imputation, scheme-generated `origin.lang-<iso639-3>` values.
+- `versioning_policy` — bump table and the consumer pinning requirement.
 
-```
-id                 "<facet-key>/<slug>", globally unique (e.g. "genre/progressive-rock")
-facet              one of the six facet keys (explicit, even though the id embeds it)
-parent             id of parent tag, or null (genre and origin only; depth ≤ 2, single parent)
-native_language    language whose label is canonical (BCP-47/ISO tag; default "en")
-labels             {language: display label} — labels[native_language] is THE canonical label;
-                   other entries are display-only variants and never create tag identity
-aliases            [{label, language}] — normalization inputs mapped to this tag on write;
-                   never stored on tracks; each alias maps to exactly one canonical tag
-```
-
-The `personal` facet has no seeded tags: it is user free-form under the `personal/` prefix
-(≤ 40 chars after the prefix), exempt from slug rules and near-duplicate gates.
-The `origin` facet additionally accepts scheme-generated language values
-`origin/language:<iso-639-3>` (not enumerated in `tags`; validate against
-`naming_rules.language_value_pattern`). **Note for the loader (MUSI-6):** conformance checking
-must accept scheme-valid `origin/language:xxx` ids in addition to enumerated tag ids.
-
-## Labeling rules (v1 additions from the human decisions, MUSI-2 2026-11-17)
-
-1. **Native-language-canonical (general rule):** where competing terms for the same concept exist
-   in different languages, the term originating in the concept's own language or culture is
-   canonical; competing terms in other languages become aliases. Worked example: `genre/hip-hop`
-   is canonical; `rap` is its alias — a tag exists for the concept, not per language.
-2. **Multilingual display variants:** `labels` may carry per-language display strings. They are
-   display-only; ingestion normalization matches ids and aliases only.
-3. **Aliases are stored off-track:** they live only in this file and are normalized to the
-   canonical id at write time.
-
-## Availability marks
-
-Each facet carries `phase1_availability` (`full` / `partial` / `none`) — how well Phase 1
-(metadata-only, local-only) can fill it — plus Phase-2 (audio) and Phase-3 (network) outlook
-notes. `none` facets (mood, activity) are *available but unfilled* in Phase 1, never broken;
-no tag's format depends on how it was derived.
+Facet and tag records also carry extension fields the loader ignores (cardinality
+guardrails, phase outlook notes, `native_language`). These matter: **`Taxonomy.dumps()`
+round-trips only loader-known keys, so a loader dump is lossy — the committed JSON file is
+the canonical source, not any serialized `Taxonomy` object.**
 
 ## Change process
 
 Taxonomy edits are owned by the Tag Taxonomy Designer. Every edit bumps `version` per
-`versioning_policy.bump_rules` and gets a `CHANGELOG.md` entry. Adding facets beyond the six
-frozen ones requires escalation to the Lead Architect (MUSI-2 scope decision).
+`versioning_policy.bump_rules` and gets a `CHANGELOG.md` entry. Adding facets beyond the
+six frozen ones requires escalation to the Lead Architect (MUSI-2 scope decision).
