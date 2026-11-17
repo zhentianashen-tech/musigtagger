@@ -19,9 +19,14 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  # Pinned deliberately: tag I/O is the highest-risk dependency in Phase 1.
+  # Pinned deliberately: tag I/O and container decryption are high-risk paths.
   "mutagen==1.48.1",
+  "cryptography==46.0.3",
 ]
+
+[project.scripts]
+musigtagger-ncm = "musigtagger.ncm:main"
+musigtagger-suggest = "musigtagger.suggest:main"
 
 [project.optional-dependencies]
 # YAML taxonomy files are readable only when this extra is installed; the
