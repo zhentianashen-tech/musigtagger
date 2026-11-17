@@ -67,7 +67,7 @@ def _common_options(parser: argparse.ArgumentParser) -> None:
         default=argparse.SUPPRESS,
         help=(
             "NCM decoder as 'module:Attribute' for the convert command "
-            "(default: musigtagger.ncm:convert_file, from MUSI-12)"
+            "(default: the MUSI-12 musigtagger.ncm module adapter)"
         ),
     )
     parser.add_argument(

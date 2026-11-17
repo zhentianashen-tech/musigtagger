@@ -55,7 +55,7 @@ Temporary/transient conversion output is fine for tests only (the test suite
 uses temporary directories and a fake tag codec), never for real tagging work.
 
 The batch step is a built-in command; it delegates decoding to MUSI-12's
-converter (`musigtagger.ncm:convert_file`, configurable with
+converter (`musigtagger.ncm`, configurable with
 `--ncm-converter module:Attribute`) and only orchestrates the tree:
 
 ```bash
@@ -78,7 +78,10 @@ is isolated (a broken container is logged and the batch continues); the output
 suffix follows the decoded stream (`.mp3`/`.flac`/`.ogg`), not the source name;
 and `conversion-report.json` in the output tree records every outcome. If the
 decoder is not installed, the command fails with an explicit pointer to MUSI-12
-rather than guessing.
+rather than guessing. The engine's `convert_file` requires the destination to
+carry the payload's extension, so the app's adapter asks `decode()` for it,
+writes to a correctly suffixed temporary file, and renames it into place; the
+engine still owns decoding, tag restoration, and cover embedding.
 
 ## Where the pieces are
 
@@ -242,7 +245,7 @@ Run offline:
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-- 84 scaffold/contract/taxonomy tests + 90 application tests = **174 tests**.
+- 84 scaffold/contract/taxonomy tests + 92 application tests = **176 tests**.
 - The real-container tests in `tests/test_tagio_mutagen.py` require `mutagen`.
   They are skipped in a runtime without it (they degrade to an explicit skip,
   not a failure). In this runtime `mutagen` is not installed and the environment

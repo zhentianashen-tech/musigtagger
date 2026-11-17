@@ -20,6 +20,7 @@ can be supplied (``--ncm-converter module:Attribute``). The default is
 
 from __future__ import annotations
 
+import importlib
 import json
 import os
 import secrets
@@ -31,7 +32,7 @@ from .config import AppConfig
 from .ingest import IngestError, load_object
 from .util import Clock, atomic_replace, utc_now_iso
 
-DEFAULT_CONVERTER_SPEC = "musigtagger.ncm:convert_file"
+DEFAULT_DECODER_MODULE = "musigtagger.ncm"
 NCM_SUFFIX = ".ncm"
 REPORT_NAME = "conversion-report.json"
 AUDIO_SUFFIXES = (".mp3", ".flac", ".ogg", ".oga")
@@ -115,20 +116,65 @@ class ConversionReport:
         }
 
 
+class EngineNcmConverter:
+    """Adapter for MUSI-12's ``musigtagger.ncm`` decoder module.
+
+    The engine's ``convert_file`` refuses an output whose extension does not
+    match the decoded payload, so the application passes a decoder-agnostic
+    temporary name. This adapter asks ``decode`` for the extension, gives the
+    temp file that suffix, and writes through the engine's own tag/cover
+    restoration. It never re-implements decoding.
+    """
+
+    def __init__(self, module: object) -> None:
+        self._decode = getattr(module, "decode", None)
+        self._convert = getattr(module, "convert", None)
+        self._convert_file = getattr(module, "convert_file", None)
+        if self._decode is None or (self._convert is None and self._convert_file is None):
+            raise ConverterUnavailableError(
+                "the NCM decoder module has no decode()/convert() API; "
+                "expected MUSI-12's musigtagger.ncm contract"
+            )
+
+    def __call__(self, source: str | Path, destination: str | Path) -> Path:
+        track = self._decode(source)
+        extension = getattr(track, "extension", None)
+        if not extension:
+            raise ConversionError(
+                f"decoder did not report an output extension for {source}"
+            )
+        target = Path(destination).with_suffix(str(extension))
+        if self._convert is not None:
+            written = self._convert(track, target)
+        else:  # pragma: no cover - fallback for a decode/convert_file-only module
+            written = self._convert_file(source, target)
+        return Path(written) if written is not None else target
+
+
 def load_converter(spec: str | None = None) -> Converter:
     """Resolve the converter port, failing with an actionable message."""
-    chosen = spec or DEFAULT_CONVERTER_SPEC
+    if spec:
+        try:
+            target = load_object(spec, kind="NCM converter")
+        except IngestError as exc:
+            raise ConverterUnavailableError(
+                f"NCM converter {spec!r} is not available in this checkout "
+                f"({exc}). Conversion is delivered by MUSI-12 "
+                "(musigtagger.ncm); merge/install it, or pass "
+                "--ncm-converter module:Attribute."
+            ) from exc
+        if not callable(target):
+            raise ConverterUnavailableError(f"{spec!r} is not callable")
+        return target
     try:
-        target = load_object(chosen, kind="NCM converter")
-    except IngestError as exc:
+        module = importlib.import_module(DEFAULT_DECODER_MODULE)
+    except ImportError as exc:
         raise ConverterUnavailableError(
-            f"NCM converter {chosen!r} is not available in this checkout "
-            f"({exc}). Conversion is delivered by MUSI-12 (musigtagger.ncm); "
+            f"NCM decoder module {DEFAULT_DECODER_MODULE!r} is not available in "
+            f"this checkout ({exc}). Conversion is delivered by MUSI-12; "
             "merge/install it, or pass --ncm-converter module:Attribute."
         ) from exc
-    if not callable(target):
-        raise ConverterUnavailableError(f"{chosen!r} is not callable")
-    return target
+    return EngineNcmConverter(module)
 
 
 def sniff_audio_suffix(path: str | Path) -> str:

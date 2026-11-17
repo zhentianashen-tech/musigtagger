@@ -12,6 +12,7 @@ from musigtagger.app.convert import (
     ConversionError,
     ConversionService,
     ConverterUnavailableError,
+    EngineNcmConverter,
     UnsupportedOutputError,
     load_converter,
     sniff_audio_suffix,
@@ -191,6 +192,42 @@ class ConversionTests(unittest.TestCase):
         path.write_bytes(b"garbage")
         with self.assertRaises(UnsupportedOutputError):
             sniff_audio_suffix(path)
+
+    def test_engine_adapter_uses_the_decoded_payload_extension(self) -> None:
+        class FakeTrack:
+            extension = ".flac"
+
+        class FakeModule:
+            def __init__(self) -> None:
+                self.written: list[Path] = []
+
+            def decode(self, source):
+                return FakeTrack()
+
+            def convert(self, track, output):
+                output = Path(output)
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.write_bytes(b"fLaC" + b"payload")
+                self.written.append(output)
+                return output
+
+        module = FakeModule()
+        self._ncm("one.ncm", "mp3")  # source marker is irrelevant to the adapter
+        report = ConversionService(
+            self.config, EngineNcmConverter(module)
+        ).convert_tree(self.source, self.output)
+        self.assertEqual(report.converted_count, 1)
+        self.assertTrue((self.output / "one.flac").is_file())
+        self.assertFalse((self.output / "one.mp3").exists())
+        # The engine got a temporary target with the payload's suffix, not
+        # the decoder-agnostic ".partial" name.
+        self.assertEqual(module.written[0].suffix, ".flac")
+        self.assertTrue(module.written[0].name.startswith(".one."))
+        self.assertFalse(module.written[0].exists())
+
+    def test_engine_adapter_rejects_a_module_without_the_api(self) -> None:
+        with self.assertRaises(ConverterUnavailableError):
+            EngineNcmConverter(object())
 
     def test_missing_decoder_error_is_actionable(self) -> None:
         with self.assertRaises(ConverterUnavailableError) as raised:
