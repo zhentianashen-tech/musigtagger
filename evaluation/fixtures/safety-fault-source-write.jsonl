@@ -1,0 +1,4 @@
+{"kind": "backup", "batch_id": "b1", "track_path": "/test-data/music-working/sample/a.flac", "ts": "2026-11-17T09:00:00Z", "result": "ok"}
+{"kind": "write", "batch_id": "b1", "track_path": "/test-data/music-working/sample/a.flac", "ts": "2026-11-17T09:00:05Z", "result": "ok"}
+{"kind": "backup", "batch_id": "b2", "track_path": "/test-data/music-source/HUNTR／X,EJAE,AUDREY NUNA - Golden.ncm", "ts": "2026-11-17T09:10:00Z", "result": "ok"}
+{"kind": "write", "batch_id": "b2", "track_path": "/test-data/music-source/HUNTR／X,EJAE,AUDREY NUNA - Golden.ncm", "ts": "2026-11-17T09:10:05Z", "result": "ok", "detail": "TRIGGERED FAULT: write resolved into the protected source root"}

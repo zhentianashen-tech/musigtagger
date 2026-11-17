@@ -1,0 +1,6 @@
+{"kind": "backup", "batch_id": "b1", "track_path": "/test-data/music-working/sample/a.flac", "ts": "2026-11-17T09:00:00Z", "result": "ok"}
+{"kind": "backup", "batch_id": "b1", "track_path": "/test-data/music-working/sample/b.mp3", "ts": "2026-11-17T09:00:01Z", "result": "ok"}
+{"kind": "write", "batch_id": "b1", "track_path": "/test-data/music-working/sample/a.flac", "ts": "2026-11-17T09:00:05Z", "result": "ok"}
+{"kind": "write", "batch_id": "b1", "track_path": "/test-data/music-working/sample/b.mp3", "ts": "2026-11-17T09:00:06Z", "result": "ok"}
+{"kind": "undo", "batch_id": "b1", "track_path": "/test-data/music-working/sample/a.flac", "ts": "2026-11-17T09:05:00Z", "result": "ok"}
+{"kind": "undo", "batch_id": "b1", "track_path": "/test-data/music-working/sample/b.mp3", "ts": "2026-11-17T09:05:01Z", "result": "failed", "detail": "TRIGGERED FAULT: restore verification mismatch"}
