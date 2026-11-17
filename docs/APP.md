@@ -49,7 +49,10 @@ needing conversion rather than silently ignoring them.
 
 Why the write path makes this non-negotiable: `tracks.path` is the target of the
 backup and the tag write. A scan-time temporary decode cannot be the write
-target, so conversion must produce persistent files.
+target, so **production conversion must write persistent MP3/FLAC files** that
+survive across runs; those files are the library the app indexes and tags.
+Temporary/transient conversion output is fine for tests only (the test suite
+uses temporary directories and a fake tag codec), never for real tagging work.
 
 ## Where the pieces are
 
