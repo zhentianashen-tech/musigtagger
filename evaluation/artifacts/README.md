@@ -44,3 +44,22 @@ PYTHONPATH=evaluation python -m evalharness report \
   --taxonomy-dir taxonomy --scan-report eval-run/scan-report.json \
   --batches eval-run/batches.json --out eval-run/report.md
 ```
+
+## Second pass — frozen remux input (2026-11-17, leader decision)
+
+The frozen evaluation input is the metadata-preserving MUSI-12 remux set at
+`/test-data/music-working/eval-input-ncm-remux` (47 MP3s, 371 MB, title/artist/
+album/cover on 47/47, genre/date on 0/47). The 47-track list is frozen in
+`../fixtures/fixed-set-47-v1.json` (`content_sha256`
+`181e18b469de4b2ef8e3d8c9b5903b81c44ed5f0820074a40ee4a1eb916988c3`).
+
+| File | What it is |
+|---|---|
+| `2026-11-17-remux-input-report.json` | Conversion outcomes + per-file SHA-256 for the 47-track input |
+| `2026-11-17-prefix-baseline-on-remux.md` | Pre-fix baseline, corrected set shape (14 works / 47 instances), re-run queue |
+| `2026-11-17-prefix-hand-check.jsonl` | Hand-check on the remux input, pre-fix (5 decisions) |
+| `2026-11-17-prefix-worksheet.jsonl` | Worksheet generated from the remux-input events |
+| `2026-11-17-prefix-engine-events.jsonl` | Suggestion events from the remux input, pre-fix |
+| `2026-11-17-prefix-report.md` | Harness report for the pre-fix baseline |
+| `../plan-v0.2-proposal-track-pre-labels.md` | **Proposal only** — track-level pre-labels (pending operator sign-off) |
+| `../fixtures/track-pre-label-worksheet-v0.2-proposal.csv` | Blank 47-row worksheet for that proposal |
