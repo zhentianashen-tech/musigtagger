@@ -68,3 +68,5 @@ album/cover on 47/47, genre/date on 0/47). The 47-track list is frozen in
 | `2026-11-17-v0.2-prep-report.md` | v0.2 prep report: labels, date research, open questions, baseline hold |
 | `2026-11-17-operator-signoff.md` | Operator sign-off: thresholds approved as-is, defaults accepted, taxonomy deferred, origin gap accepted |
 | `2026-11-17-v0.2-baseline/` | Formal v0.2 baseline on main 5354663: report, events, worksheet, hand-check, egress evidence, RUN.md |
+| `2026-11-17-v0.2-baseline/ACCEPTANCE.md` | Operator acceptance on the four approved bars; era recall "unmeasured — runtime egress"; networked date check pending |
+| `../tools/networked_date_check.py` | One-shot networked date check for final Phase-1 acceptance (fails closed offline) |

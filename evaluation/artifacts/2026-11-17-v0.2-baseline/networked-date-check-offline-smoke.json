@@ -1,0 +1,579 @@
+{
+  "summary": {
+    "schema": "musigtagger.networked-date-check.v1",
+    "status": "network_unavailable",
+    "input": "/test-data/music-working/eval-input-ncm-remux",
+    "taxonomy_version": "1.0.0",
+    "instances": 47,
+    "unique_album_artist_pairs": 16,
+    "resolved_instances": 0,
+    "unresolved_instances": 0,
+    "network_error_instances": 47,
+    "era_mismatches": 0,
+    "year_mismatches_same_era": 0,
+    "flagged_instances": 0,
+    "era_counts": {},
+    "expected_era_counts": {
+      "era.2020s": 47
+    },
+    "work_resolution": {
+      "free": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "golden": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "how it’s done": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "jinu’s lament": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "prologue (hunter’s mantra)": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "score suite": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "soda pop": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "strategy": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2024
+      },
+      "takedown": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "takedown (jeongyeon, jihyo, chaeyoung)": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "what it sounds like": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "your idol": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      },
+      "사랑인가 봐 love, maybe": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2022
+      },
+      "오솔길 path": {
+        "resolved": 0,
+        "unresolved": 0,
+        "years": [],
+        "expected_year": 2025
+      }
+    },
+    "abstain_allowed": false
+  },
+  "tracks": [
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,Audrey Nuna - Golden (1).mp3",
+      "work_key": "golden",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Acapella).mp3",
+      "work_key": "golden",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Instrumental).mp3",
+      "work_key": "golden",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Sing-Along).mp3",
+      "work_key": "golden",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden.mp3",
+      "work_key": "golden",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,Audrey Nuna - How It’s Done (1).mp3",
+      "work_key": "how it’s done",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film)' artist='HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - How It’s Done (Acapella).mp3",
+      "work_key": "how it’s done",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - How It’s Done (Instrumental).mp3",
+      "work_key": "how it’s done",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - How It’s Done (Sing-Along).mp3",
+      "work_key": "how it’s done",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - How It’s Done.mp3",
+      "work_key": "how it’s done",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,Audrey Nuna - Takedown (1).mp3",
+      "work_key": "takedown",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film)' artist='HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Takedown (Acapella).mp3",
+      "work_key": "takedown",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Takedown (Instrumental).mp3",
+      "work_key": "takedown",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Takedown (Sing-Along).mp3",
+      "work_key": "takedown",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Takedown.mp3",
+      "work_key": "takedown",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,Audrey Nuna - What It Sounds Like (1).mp3",
+      "work_key": "what it sounds like",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film)' artist='HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like (Acapella).mp3",
+      "work_key": "what it sounds like",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like (Instrumental).mp3",
+      "work_key": "what it sounds like",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like (Sing-Along).mp3",
+      "work_key": "what it sounds like",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like.mp3",
+      "work_key": "what it sounds like",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Jinu,Ahn Hyo-seop - Jinu’s Lament.mp3",
+      "work_key": "jinu’s lament",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Jinu/Ahn Hyo-seop",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Jokers - 오솔길 Path.mp3",
+      "work_key": "오솔길 path",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Jokers",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Marcelo Zarvos - Score Suite (1).mp3",
+      "work_key": "score suite",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Marcelo Zarvos",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Marcelo Zarvos - Score Suite.mp3",
+      "work_key": "score suite",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Marcelo Zarvos",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Marcelo Zarvos,EJAE - Prologue (Hunter’s Mantra).mp3",
+      "work_key": "prologue (hunter’s mantra)",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Marcelo Zarvos/EJAE",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/MeloMance - 사랑인가 봐 Love, Maybe (1).mp3",
+      "work_key": "사랑인가 봐 love, maybe",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "MeloMance",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2022
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/MeloMance - 사랑인가 봐 Love, Maybe.mp3",
+      "work_key": "사랑인가 봐 love, maybe",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "MeloMance",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2022
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Rumi,Jinu,EJAE - Free (1).mp3",
+      "work_key": "free",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Rumi,Jinu,EJAE - Free (Acapella).mp3",
+      "work_key": "free",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Rumi,Jinu,EJAE - Free (Instrumental).mp3",
+      "work_key": "free",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Rumi,Jinu,EJAE - Free (Sing-Along).mp3",
+      "work_key": "free",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Rumi,Jinu,EJAE - Free.mp3",
+      "work_key": "free",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Soda Pop (1).mp3",
+      "work_key": "soda pop",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Soda Pop (Acapella).mp3",
+      "work_key": "soda pop",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Soda Pop (Instrumental).mp3",
+      "work_key": "soda pop",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Soda Pop (Sing-Along).mp3",
+      "work_key": "soda pop",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Soda Pop.mp3",
+      "work_key": "soda pop",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Your Idol (1).mp3",
+      "work_key": "your idol",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Your Idol (Acapella).mp3",
+      "work_key": "your idol",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Your Idol (Instrumental).mp3",
+      "work_key": "your idol",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Your Idol (Sing-Along).mp3",
+      "work_key": "your idol",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Your Idol.mp3",
+      "work_key": "your idol",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/TWICE - Strategy (1).mp3",
+      "work_key": "strategy",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2024
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/TWICE - Strategy.mp3",
+      "work_key": "strategy",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "TWICE",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2024
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/TWICE - TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG) (1).mp3",
+      "work_key": "takedown (jeongyeon, jihyo, chaeyoung)",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film)' artist='TWICE'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/TWICE - TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG).mp3",
+      "work_key": "takedown (jeongyeon, jihyo, chaeyoung)",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "TWICE",
+      "status": "network_error",
+      "error": "lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='TWICE'; skipping without another network attempt",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    },
+    {
+      "path": "/test-data/music-working/eval-input-ncm-remux/죠커스 - 오솔길 Path.mp3",
+      "work_key": "오솔길 path",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "죠커스",
+      "status": "network_error",
+      "error": "musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>",
+      "expected_era": "era.2020s",
+      "expected_year": 2025
+    }
+  ]
+}

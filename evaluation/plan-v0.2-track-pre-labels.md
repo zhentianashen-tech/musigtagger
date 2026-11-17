@@ -150,6 +150,13 @@ report-only recall is 31.9% instance / 30.0% work-level; the date-resolved
 forecast is 65.9% / 65% if all 14 works resolve. Full evidence:
 `artifacts/2026-11-17-v0.2-baseline/RUN.md`.
 
+**Baseline accepted 2026-11-17T12:03:18Z** on the four approved quality bars;
+era recall is recorded as "unmeasured — runtime egress"; one networked date
+check remains before final Phase-1 acceptance. Record:
+`artifacts/2026-11-17-v0.2-baseline/ACCEPTANCE.md`. Check tool:
+`evaluation/tools/networked_date_check.py` (exit 3 when offline; 16 unique
+MusicBrainz pairs, ~16 paced queries, cached).
+
 ## 7. Decisions resolved (operator, 2026-11-17)
 
 The operator answered on MUSI-9 (`01a1e957-d274-7627-a3ae-33d40e231a98`); the
@@ -193,6 +200,10 @@ There are no open evaluation-side questions blocking the baseline.
 - 2026-11-17 12:00Z — v0.2 baseline executed on `main` 5354663; four approved
   quality bars pass, safety unverified (MUSI-8), era recall unmeasured
   (runtime egress). See `artifacts/2026-11-17-v0.2-baseline/RUN.md`.
+- 2026-11-17 12:03Z — operator accepts the baseline on the four approved bars;
+  era recall recorded "unmeasured — runtime egress"; one networked date check
+  remains before final Phase-1 acceptance. Record:
+  `artifacts/2026-11-17-v0.2-baseline/ACCEPTANCE.md`.
 
 ## 9. What was deliberately not done
 

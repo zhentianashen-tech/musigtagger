@@ -1,7 +1,9 @@
 # Plan v0.2 baseline run — 2026-11-17
 
-**Status: baseline executed on the merged `main`; quality bars pass, safety
-unverified, era recall unmeasured because this runtime has no network egress.**
+**Status: baseline executed on the merged `main`; the four approved quality
+bars are accepted by the operator (2026-11-17T12:03:18Z), safety is unverified,
+and era recall is recorded as "unmeasured — runtime egress". One networked date
+check remains before final Phase-1 acceptance (see `ACCEPTANCE.md`).**
 
 ## Engine build and input
 
@@ -51,17 +53,13 @@ instance recall to **65.9%** (work-level 65%); origin stays 0 under the
 accepted Phase 2/3 gap. `Score Suite` may still abstain even with network
 because its album is the separate score release group, so 47/47 is a ceiling.
 
-## Decision
+## Decision (resolved 2026-11-17T12:03:18Z)
 
-The four approved quality bars pass on this run. The only unmeasured item is
-the **report-only** era recall, blocked by infrastructure. Options for the
-leader/operator:
-
-1. Accept the baseline on the approved bars, record era recall as "unmeasured
-   — runtime egress", and run a networked date check once before final
-   Phase-1 acceptance (one command; the cache then makes reruns free).
-2. Require the networked date check before accepting the baseline, and re-run
-   this same baseline on a networked machine.
+The operator accepted option 1: **baseline accepted on the four approved bars;
+era recall recorded as "unmeasured — runtime egress"; one networked date check
+required before final Phase-1 acceptance.** Record: `ACCEPTANCE.md`
+(operator comment `01a1e963-dcea-7704-b122-fc9f8e6bd098`). The check tool is
+`evaluation/tools/networked_date_check.py`, runbook in `ACCEPTANCE.md`.
 
 Safety remains pending the MUSI-8 apply/backup/undo exercise and is not
 satisfied by this audit run.
