@@ -86,8 +86,11 @@ for item in result.results:
     print(item.track.path, item.suggestions)
 ```
 
-Embedded genre aliases and release years have high confidence; path-derived
-genre/year and origin hints are lower confidence. Phase-1-unavailable facets
+Embedded genre aliases and release years have high confidence. Album, artist,
+folder-name, filename, and title text are graded free-text signals at lower
+confidence (folder names are treated as organiser-chosen vocabulary and beat
+title words; a bare single-word genre label like "pop" never fires from free
+text, only from explicit vocabulary). Phase-1-unavailable facets
 and user-owned personal tags are left empty. The runner validates every tag id
 against the pinned taxonomy and emits complete suggestion events. Applications
 can use the same logger's `log_review_outcome` for review decisions.
