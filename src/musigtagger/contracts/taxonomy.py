@@ -199,6 +199,7 @@ class Taxonomy:
     tags: tuple[TaxonomyTag, ...]
     canonical_label_policy: str = "native-original-language"
     schema_version: int = SCHEMA_VERSION
+    description: str = ""
     _facets_by_id: Mapping[str, TaxonomyFacet] = field(
         init=False, repr=False, compare=False
     )
@@ -213,6 +214,8 @@ class Taxonomy:
                 "'MAJOR.MINOR.PATCH[-suffix]'"
             )
         object.__setattr__(self, "name", _normalise_text(self.name, "taxonomy name"))
+        if not isinstance(self.description, str):
+            raise TypeError("taxonomy description must be a string")
         if self.schema_version != SCHEMA_VERSION:
             raise ValueError(
                 f"unsupported taxonomy schema_version {self.schema_version!r}; "
@@ -311,6 +314,7 @@ class Taxonomy:
             "schema_version": self.schema_version,
             "version": self.version,
             "name": self.name,
+            "description": self.description,
             "canonical_label_policy": self.canonical_label_policy,
             "facets": [facet.to_dict() for facet in self.facets],
             "tags": [tag.to_dict() for tag in self.tags],
@@ -503,6 +507,9 @@ def _parse_document(document: Any, *, source: str) -> Taxonomy:
     name = data.get("name")
     if not isinstance(name, str) or not name.strip():
         raise TaxonomyFormatError(f"{source}: name must be a non-empty string")
+    description = data.get("description", "")
+    if not isinstance(description, str):
+        raise TaxonomyFormatError(f"{source}: description must be a string")
     policy = data.get("canonical_label_policy", "native-original-language")
     if not isinstance(policy, str) or not policy.strip():
         raise TaxonomyFormatError(
@@ -520,6 +527,7 @@ def _parse_document(document: Any, *, source: str) -> Taxonomy:
         return Taxonomy(
             version=version,
             name=name,
+            description=description,
             facets=facets,
             tags=tags,
             canonical_label_policy=policy,

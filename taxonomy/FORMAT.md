@@ -36,6 +36,7 @@ that drop-in**: the loader reads the version from the document, and the
 | `schema_version` | integer | yes | Data-format version. Must be `1` for this loader. |
 | `version` | string | yes | Vocabulary version, `MAJOR.MINOR.PATCH[-suffix]` (`0.1.0-draft`, `1.0.0`). This is what consumers pin. |
 | `name` | string | yes | Human-readable taxonomy name. |
+| `description` | string | no | Free-text purpose/scope note. Preserved by round-trip. |
 | `canonical_label_policy` | string | no | How canonical labels were chosen. The approved policy is `native-original-language`: the native/original-language term is canonical (`Hip-hop`), competing terms are aliases (`Rap`). |
 | `facets` | array | yes | At least one facet; see below. |
 | `tags` | array | yes | At least one tag; see below. |

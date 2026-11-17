@@ -134,6 +134,7 @@ class TaxonomyRoundTripTests(unittest.TestCase):
             reloaded = TaxonomyLoader.load_file(path)
         self.assertEqual(reloaded.version, V0_VERSION)
         self.assertEqual(reloaded, self.taxonomy)
+        self.assertIn("Starter vocabulary", reloaded.description)
 
     def test_load_directory_pins_version(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
