@@ -12,6 +12,7 @@ from .metrics import (
     BatchCompletionResult,
     CategoryCounts,
     QualityResult,
+    RecallResult,
 )
 from .safety import SafetyResult
 from .thresholds import STATUS_LABEL, Thresholds
@@ -69,6 +70,7 @@ def render_report(
     taxonomy_error: str | None,
     extra_findings: FindingList | None = None,
     extra_sections: list[str] | None = None,
+    recall: RecallResult | None = None,
 ) -> str:
     """Render the full markdown report."""
     quality_per_category = dict(quality.per_category)
@@ -193,6 +195,52 @@ def render_report(
     if quality.conformance.genre_depth_violations:
         lines += ["", "Depth violations:", ""]
         lines += [f"- `{ref}`" for ref in quality.conformance.genre_depth_violations[:20]]
+    if recall is not None:
+        lines += [
+            "",
+            "## 5b. Expected-tag recall (plan v0.2 — report-only)",
+            "",
+            "*Report-only: no recall threshold gates acceptance. Counts are shown with every rate.*",
+            "",
+            "| Category | Expected | Exact | Parent-only | Missed | Recall (exact) | Recall (any) |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for category in sorted(recall.per_category):
+            counts = recall.per_category[category]
+            lines.append(
+                f"| {category} | {counts.expected} | {counts.exact} | {counts.parent_only} "
+                f"| {counts.missed} | {_pct(counts.recall_exact)} | {_pct(counts.recall_any)} |"
+            )
+        overall = recall.overall
+        lines += [
+            f"| **overall (instances)** | {overall.expected} | {overall.exact} "
+            f"| {overall.parent_only} | {overall.missed} | {_pct(overall.recall_exact)} "
+            f"| {_pct(overall.recall_any)} |",
+            "",
+            "### Per-work view",
+            "",
+            "| Work | Expected | Exact | Parent-only | Missed | Recall (any) |",
+            "|---|---|---|---|---|---|",
+        ]
+        for work_key in sorted(recall.per_work):
+            counts = recall.per_work[work_key]
+            lines.append(
+                f"| {work_key} | {counts.expected} | {counts.exact} | {counts.parent_only} "
+                f"| {counts.missed} | {_pct(counts.recall_any)} |"
+            )
+        work_overall = recall.work_overall
+        lines += [
+            f"| **overall (works)** | {work_overall.expected} | {work_overall.exact} "
+            f"| {work_overall.parent_only} | {work_overall.missed} "
+            f"| {_pct(work_overall.recall_any)} |",
+            "",
+            f"- Tracks with expected tags but no suggestions: "
+            f"**{len(recall.tracks_with_expected_no_suggestion)}**",
+        ]
+        if recall.tracks_with_expected_no_suggestion:
+            lines += [f"  - `{path}`" for path in recall.tracks_with_expected_no_suggestion[:10]]
+            if len(recall.tracks_with_expected_no_suggestion) > 10:
+                lines.append(f"  - … and {len(recall.tracks_with_expected_no_suggestion) - 10} more")
     lines += [
         "",
         "## 6. Safety",

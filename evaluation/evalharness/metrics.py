@@ -7,6 +7,7 @@ small sample — percentages alone over-read single-category results).
 from __future__ import annotations
 
 import json
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Mapping
@@ -14,6 +15,7 @@ from typing import Any, Mapping
 from .events import EventReadResult
 from .findings import Classification, Finding, FindingList, Severity
 from .groundtruth import HandCheckReadResult
+from .prelabels import PreLabelReadResult
 
 
 @dataclass
@@ -366,3 +368,174 @@ def load_scan_report(path: str | Path) -> Mapping[str, Any]:
     if not isinstance(data, Mapping):
         raise ValueError(f"{path}: expected a JSON object")
     return data
+
+
+# ---------------------------------------------------------------------------
+# Plan v0.2 expected-tag recall (report-only, not a gate)
+# ---------------------------------------------------------------------------
+
+
+def _nfc(value: str) -> str:
+    return unicodedata.normalize("NFC", value)
+
+
+@dataclass
+class RecallCounts:
+    """Expected-tag match counts for one category, work, or the roll-up."""
+
+    expected: int = 0
+    exact: int = 0
+    parent_only: int = 0
+    missed: int = 0
+
+    @property
+    def recall_exact(self) -> float | None:
+        return self.exact / self.expected if self.expected else None
+
+    @property
+    def recall_any(self) -> float | None:
+        return (
+            (self.exact + self.parent_only) / self.expected
+            if self.expected
+            else None
+        )
+
+
+@dataclass
+class RecallResult:
+    """Plan v0.2 expected-tag recall, per instance and per work."""
+
+    per_category: dict[str, RecallCounts] = field(default_factory=dict)
+    per_work: dict[str, RecallCounts] = field(default_factory=dict)
+    overall: RecallCounts = field(default_factory=RecallCounts)
+    work_overall: RecallCounts = field(default_factory=RecallCounts)
+    tracks_with_expected_no_suggestion: list[str] = field(default_factory=list)
+    labels_count: int = 0
+    findings: FindingList = field(default_factory=FindingList)
+
+
+def _ancestor_ids(taxonomy: Any | None, tag_id: str) -> set[str]:
+    """Ancestor tag ids (parent chain), excluding the tag itself."""
+    if taxonomy is None:
+        return set()
+    ancestors: set[str] = set()
+    current = tag_id
+    seen = {current}
+    while True:
+        tag = taxonomy.tag(current)
+        parent = getattr(tag, "parent", None)
+        if parent is None or parent in seen:
+            return ancestors
+        ancestors.add(parent)
+        seen.add(parent)
+        current = parent
+
+
+def _record(counts: RecallCounts, exact: bool, parent: bool) -> None:
+    counts.expected += 1
+    if exact:
+        counts.exact += 1
+    elif parent:
+        counts.parent_only += 1
+    else:
+        counts.missed += 1
+
+
+def compute_recall(
+    events: EventReadResult,
+    prelabels: PreLabelReadResult | None,
+    taxonomy: Any | None,
+) -> RecallResult:
+    """Compute expected-tag recall by joining suggestions on canonical path.
+
+    The result is report-only: it never changes precision semantics or gating.
+    """
+    result = RecallResult()
+    if prelabels is None or not prelabels.labels:
+        result.findings.add(
+            Finding(
+                severity=Severity.HIGH,
+                classification=Classification.EVALUATION_DATA,
+                summary="No pre-labels supplied; expected-tag recall not computable",
+                responsible_role="Evaluation & Review Agent",
+            )
+        )
+        return result
+
+    result.labels_count = len(prelabels.labels)
+    if prelabels.problems:
+        result.findings.add(
+            Finding(
+                severity=Severity.MEDIUM,
+                classification=Classification.EVALUATION_DATA,
+                summary=f"Pre-label worksheet has {len(prelabels.problems)} invalid row(s)",
+                evidence="; ".join(prelabels.problems[:10]),
+                responsible_role="Evaluation & Review Agent",
+            )
+        )
+
+    suggestions_by_path: dict[str, set[str]] = {}
+    for event in events.suggestions:
+        suggestions_by_path.setdefault(_nfc(event.track_path), set()).add(event.tag_id)
+
+    unknown_tags: set[str] = set()
+    work_expected: dict[str, set[str]] = {}
+    work_suggested: dict[str, set[str]] = {}
+
+    for label in prelabels.labels:
+        path_key = _nfc(label.canonical_path)
+        suggested = suggestions_by_path.get(path_key, set())
+        work_key = label.work_key or label.track_id
+        work_suggested.setdefault(work_key, set()).update(suggested)
+        if label.expected_tags and not suggested:
+            result.tracks_with_expected_no_suggestion.append(label.canonical_path)
+        for tag_id in label.expected_tags:
+            category = tag_id.split(".", 1)[0] if "." in tag_id else tag_id
+            bucket = result.per_category.setdefault(category, RecallCounts())
+            work_expected.setdefault(work_key, set()).add(tag_id)
+            if taxonomy is not None and not taxonomy.has_tag(tag_id):
+                unknown_tags.add(tag_id)
+                _record(bucket, False, False)
+                _record(result.overall, False, False)
+                continue
+            exact = tag_id in suggested
+            parent = (not exact) and bool(_ancestor_ids(taxonomy, tag_id) & suggested)
+            _record(bucket, exact, parent)
+            _record(result.overall, exact, parent)
+
+    for work_key, expected_tags in work_expected.items():
+        suggested = work_suggested.get(work_key, set())
+        for tag_id in expected_tags:
+            work_bucket = result.per_work.setdefault(work_key, RecallCounts())
+            if taxonomy is not None and not taxonomy.has_tag(tag_id):
+                _record(work_bucket, False, False)
+                _record(result.work_overall, False, False)
+                continue
+            exact = tag_id in suggested
+            parent = (not exact) and bool(_ancestor_ids(taxonomy, tag_id) & suggested)
+            _record(work_bucket, exact, parent)
+            _record(result.work_overall, exact, parent)
+
+    for tag_id in sorted(unknown_tags):
+        result.findings.add(
+            Finding(
+                severity=Severity.HIGH,
+                classification=Classification.EVALUATION_DATA,
+                summary=f"Pre-label references unknown taxonomy tag: {tag_id}",
+                responsible_role="Evaluation & Review Agent",
+            )
+        )
+    if result.tracks_with_expected_no_suggestion:
+        result.findings.add(
+            Finding(
+                severity=Severity.INFO,
+                classification=Classification.EVALUATION_DATA,
+                summary=(
+                    f"{len(result.tracks_with_expected_no_suggestion)} track(s) have expected "
+                    "tags but no suggestions (expected-tag recall sees them)"
+                ),
+                responsible_role="Tagging Engine Engineer",
+            )
+        )
+    return result
+

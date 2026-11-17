@@ -61,5 +61,8 @@ album/cover on 47/47, genre/date on 0/47). The 47-track list is frozen in
 | `2026-11-17-prefix-worksheet.jsonl` | Worksheet generated from the remux-input events |
 | `2026-11-17-prefix-engine-events.jsonl` | Suggestion events from the remux input, pre-fix |
 | `2026-11-17-prefix-report.md` | Harness report for the pre-fix baseline |
-| `../plan-v0.2-proposal-track-pre-labels.md` | **Proposal only** — track-level pre-labels (pending operator sign-off) |
-| `../fixtures/track-pre-label-worksheet-v0.2-proposal.csv` | Blank 47-row worksheet for that proposal |
+| `../plan-v0.2-track-pre-labels.md` | **In force** (operator-approved 2026-11-17) — track-level pre-labels, per work with per-instance propagation |
+| `../fixtures/prelabels-v0.2-works.json` | 14 per-work pre-labels (genre/era/year/origin + evidence) |
+| `../fixtures/track-pre-label-worksheet-v0.2.csv` | Filled 47-row worksheet (propagated from the 14 works) |
+| `../fixtures/prelabels-v0.2-validation.json` | Validation record: 0 issues, tag ids checked against taxonomy v1.0.0 |
+| `2026-11-17-v0.2-prep-report.md` | v0.2 prep report: labels, date research, open questions, baseline hold |

@@ -25,10 +25,12 @@ from .groundtruth import build_worksheet, read_hand_check, write_worksheet
 from .metrics import (
     compute_batch_completion,
     compute_quality,
+    compute_recall,
     load_batches,
     load_scan_report,
     load_taxonomy,
 )
+from .prelabels import read_prelabels
 from .report import render_report
 from .safety import read_safety_evidence, run_safety_checks
 from .thresholds import DEFAULT_THRESHOLDS, PLAN_VERSION
@@ -62,6 +64,9 @@ def _cmd_report(args: argparse.Namespace) -> int:
         safety_evidence = read_safety_evidence(args.safety_evidence)
 
     quality = compute_quality(events, hand_check, taxonomy, scan_report)
+    recall = None
+    if args.prelabels:
+        recall = compute_recall(events, read_prelabels(args.prelabels), taxonomy)
     safety = run_safety_checks(safety_evidence, events, args.source_root)
 
     extra_findings = FindingList()
@@ -108,6 +113,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
         taxonomy_error=taxonomy_error,
         extra_findings=extra_findings,
         extra_sections=args.extra_section or None,
+        recall=recall,
     )
 
     out_path = Path(args.out)
@@ -200,6 +206,10 @@ def build_parser() -> argparse.ArgumentParser:
     report = sub.add_parser("report", help="compute metrics and render the markdown report")
     report.add_argument("--events", nargs="+", required=True, help="JSONL event log(s)")
     report.add_argument("--hand-check", help="hand-check log (JSONL or CSV) = ground truth")
+    report.add_argument(
+        "--prelabels",
+        help="plan v0.2 per-instance pre-label worksheet (CSV), enables expected-tag recall",
+    )
     report.add_argument("--safety-evidence", help="JSONL backup/write/undo records")
     report.add_argument("--batches", help="JSON batch/run records")
     report.add_argument("--scan-report", help="JSON scan summary (coverage denominator)")
