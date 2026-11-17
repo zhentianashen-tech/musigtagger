@@ -5,20 +5,20 @@ filenames and embedded tags, proposes taxonomy tags, lets you accept / edit /
 reject them in a minimal local web app, and applies accepted tags with a
 mandatory backup and undo.
 
-**This repository currently contains the Phase 1 scaffold and the shared
-contracts only.** It has no suggestion logic, no review UI, and no tag-writing
-code yet — those are separate deliverables (`CONTRACTS.md` §7). The point of
-this layer is to freeze the interfaces every later component builds against.
+The repository contains the shared contracts, taxonomy v1.0.0, and the Phase 1
+batch scanner and metadata suggestion engine. The review UI and tag-writing
+code remain separate deliverables; the engine never writes audio files.
 
 - **Contracts:** [`CONTRACTS.md`](CONTRACTS.md)
 - **Taxonomy data format:** [`taxonomy/FORMAT.md`](taxonomy/FORMAT.md)
-- **Current taxonomy:** `taxonomy/taxonomy-0.1.0-draft.json` (v0; v1.0.0 lands
-  as a new file with no schema change)
+- **Current taxonomy:** `taxonomy/taxonomy-1.0.0.json` (the engine pins this
+  exact version)
 
 ## Requirements
 
 - Python 3.11+
 - `mutagen` (pinned in `pyproject.toml`) for tag I/O
+- `cryptography` (pinned) for native NCM AES decryption
 - SQLite (stdlib `sqlite3`)
 
 ## Install
@@ -37,8 +37,7 @@ pip install -e '.[dev]'    # adds pytest
 
 ## Run the tests
 
-The committed tests use only the standard library, so they run without the dev
-extra:
+The suite needs the runtime dependencies (`mutagen`, `cryptography`) installed:
 
 ```bash
 python -m unittest discover -s tests -v
@@ -56,32 +55,61 @@ Without installing the package, point `PYTHONPATH` at `src/`:
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-## Quick start (contracts only)
+## Quick start (scan and suggest)
 
-Load the pinned taxonomy, inspect it, and validate tag references:
+Scanning is recursive and batch-oriented. MP3, FLAC, Ogg, and Oga files are
+parsed read-only with `mutagen`. NCM files are decoded through the single
+`musigtagger.ncm` decoder and converted to their embedded MP3/FLAC/Ogg stream
+in temporary storage, including their container metadata; the source file is
+never modified. Each malformed track is logged in the returned `failures` and
+through Python logging without aborting the batch. Rescans upsert by absolute
+path and preserve track ids and creation timestamps.
 
 ```python
 from musigtagger.contracts import TaxonomyLoader
-
-taxonomy = TaxonomyLoader.load("taxonomy", version="0.1.0-draft")
-print(taxonomy.version, len(taxonomy), taxonomy.facet_ids)
-print(taxonomy.tag("genre.hip-hop").canonical_label)   # "Hip-hop"
-print(taxonomy.tag("genre.hip-hop").display_label("zh"))  # "嘻哈"
-taxonomy.validate_tag_ids(["genre.rock.progressive-rock", "era.1990s"])
-```
-
-Create the library database (schema v1):
-
-```python
 from musigtagger.db import initialize_database
+from musigtagger.engine import (
+    JsonlEventLogger,
+    LibraryScanner,
+    MetadataSuggestionProvider,
+    SuggestionRunner,
+)
 
+taxonomy = TaxonomyLoader.load("taxonomy", version="1.0.0")
 connection = initialize_database("library.sqlite3")
-print(connection.execute("PRAGMA user_version").fetchone()[0])  # 1
+scan = LibraryScanner(connection).scan_directory("/path/to/music")
+
+provider = MetadataSuggestionProvider(taxonomy)  # pure: no I/O
+logger = JsonlEventLogger("history/engine-events.jsonl")
+result = SuggestionRunner(taxonomy, logger).suggest_batch(scan.tracks, provider)
+for item in result.results:
+    print(item.track.path, item.suggestions)
 ```
+
+Embedded genre aliases and release years have high confidence; path-derived
+genre/year and origin hints are lower confidence. Phase-1-unavailable facets
+and user-owned personal tags are left empty. The runner validates every tag id
+against the pinned taxonomy and emits complete suggestion events. Applications
+can use the same logger's `log_review_outcome` for review decisions.
 
 The migrated schema includes `tracks`, `suggestions` (five review states),
 `write_batches`, `tag_backups`, `library_meta`, and the
 `schema_migrations` audit table. See `src/musigtagger/db/schema_v1.sql`.
+
+## NCM input
+
+Decode one local NetEase Cloud Music file losslessly (no transcoding):
+
+```bash
+musigtagger-ncm input.ncm output.flac
+```
+
+Omit `output.flac` to choose `.mp3` or `.flac` from the embedded payload. The
+source is never changed, existing outputs are not overwritten, and NCM tags and
+cover art are restored on the new file. The scanner calls the same
+`musigtagger.ncm` module; there is no second decoder implementation. See
+[`docs/ncm-format.md`](docs/ncm-format.md) for the decoder API and validation
+status.
 
 ## Repository layout
 
@@ -89,11 +117,13 @@ The migrated schema includes `tracks`, `suggestions` (five review states),
 CONTRACTS.md                 taxonomy / engine / application / observability contracts
 taxonomy/
   FORMAT.md                  taxonomy data format (schema_version 1)
-  taxonomy-0.1.0-draft.json  v0 vocabulary from Taxonomy Proposal v0
+  taxonomy-1.0.0.json        frozen Phase 1 vocabulary
 src/musigtagger/
   contracts/                 immutable value types, provider protocol, taxonomy loader
   db/                        SQLite schema v1 + forward-only migration runner
-tests/                       standard-library test suite
+  engine/                    scanner, metadata provider, batch runner, JSONL events
+  ncm.py                     the single NCM decoder and CLI
+tests/                       test suite
 ```
 
 ## Phase 1 status and boundaries
@@ -101,8 +131,8 @@ tests/                       standard-library test suite
 | Piece | Where | Status |
 |---|---|---|
 | Repo scaffold, contracts v1, taxonomy loader, schema v1 | this issue (MUSI-6) | delivered |
-| Taxonomy v1.0.0 data | MUSI-5 | parallel |
-| Library scanner + metadata suggestion provider | MUSI-7 | next stage |
+| Taxonomy v1.0.0 data | MUSI-5 | delivered |
+| Library scanner + metadata suggestion provider | MUSI-7 | delivered |
 | Review web app + safe tag write / backup / undo | MUSI-8 | next stage |
 
 Phase 2 (audio analysis) and Phase 3 (network enrichment) add providers behind

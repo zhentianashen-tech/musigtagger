@@ -5,9 +5,8 @@ tags are turned into taxonomy suggestions, a human reviews them in a local web
 app, and the application layer (the only writer) applies accepted tags with a
 mandatory backup and undo.
 
-This package currently contains **only the shared contract layer and the repo
-scaffold**. It deliberately has no suggestion logic, no tag writing, and no UI.
-Those live in the engine and application packages that build on these contracts.
+The package contains the shared contracts and the Phase 1 metadata engine.
+Tag writing and UI remain in the separate application layer.
 
 The contract documents are authoritative:
 
