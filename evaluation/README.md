@@ -52,6 +52,26 @@ Demonstrate that the safety checks actively fail on triggered faults:
 PYTHONPATH=evaluation:src uv run --no-project python -m evalharness safety-demo
 ```
 
+## Per-work vs per-instance reporting
+
+The frozen set is 14 distinct works across 47 instances, so instance-level
+percentages can be dominated by the seven five-instance works. The roll-up tool
+reports both views from the same event stream and hand-check log:
+
+```bash
+PYTHONPATH=evaluation:src python evaluation/tools/per_work_rollup.py \
+    --manifest evaluation/fixtures/fixed-set-47-v1.json \
+    --events eval-run/engine-events.jsonl \
+    --hand-check eval-run/hand-check.jsonl \
+    --out-json eval-run/per-work-rollup.json \
+    --out-md eval-run/per-work-rollup.md
+```
+
+`evaluation/tools/frozen_input_probe.py` is the read-only precondition audit for
+the frozen input: manifest hash, per-file SHA-256/size, and the local
+year/date evidence (embedded tags, filename, title, album) behind the era
+coverage statement.
+
 ## Inputs
 
 | Input | Format | Required | Producer |

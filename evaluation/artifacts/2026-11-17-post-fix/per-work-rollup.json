@@ -1,0 +1,250 @@
+{
+  "manifest_version": "fixed-set-47-v1",
+  "manifest_content_sha256": "181e18b469de4b2ef8e3d8c9b5903b81c44ed5f0820074a40ee4a1eb916988c3",
+  "taxonomy_version": "1.0.0",
+  "events_file": "../eval-run-remux-post-fix/engine-events.jsonl",
+  "hand_check_file": "../eval-run-remux-post-fix/hand-check.jsonl",
+  "run_ids": [
+    "run-e83520cfc5a94969a100df91f9ca8579"
+  ],
+  "unmapped_event_tracks": [],
+  "instance_level": {
+    "tracks": 47,
+    "suggestions": 47,
+    "checked": 47,
+    "unchecked": 0,
+    "accepted": 44,
+    "rejected": 3,
+    "modified": 0,
+    "tracks_with_usable_suggestion": 44,
+    "precision": 0.9361702127659575,
+    "coverage": 0.9361702127659575
+  },
+  "work_level": {
+    "works": 14,
+    "works_with_checked_suggestion": 14,
+    "works_fully_accepted": 12,
+    "works_with_any_rejected_or_modified": 2,
+    "works_with_usable_suggestion": 12,
+    "pairs_checked": 14,
+    "pairs_accepted": 12,
+    "pairs_rejected": 2,
+    "pairs_modified": 0,
+    "pairs_mixed": 0,
+    "instances_per_work": {
+      "2": 5,
+      "5": 7,
+      "1": 2
+    },
+    "precision_pairs": 0.8571428571428571,
+    "precision_works_fully_accepted": 0.8571428571428571,
+    "coverage_works": 0.8571428571428571
+  },
+  "era": {
+    "instance_suggestions": 0,
+    "work_suggestions": 0,
+    "instance_coverage": 0.0,
+    "work_coverage": 0.0
+  },
+  "per_category_instance": {
+    "genre": {
+      "checked": 47,
+      "accepted": 44,
+      "rejected": 3,
+      "modified": 0
+    }
+  },
+  "per_category_work": {
+    "genre": {
+      "checked": 14,
+      "accepted": 12,
+      "rejected": 2,
+      "modified": 0,
+      "mixed": 0
+    }
+  },
+  "work_pairs": [
+    {
+      "work_key": "free",
+      "title": "Free",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "golden",
+      "title": "Golden",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "how it’s done",
+      "title": "How It’s Done",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "jinu’s lament",
+      "title": "Jinu’s Lament",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 1,
+      "votes": {
+        "accept": 1,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "prologue (hunter’s mantra)",
+      "title": "Prologue (Hunter’s Mantra)",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 1,
+      "votes": {
+        "accept": 0,
+        "reject": 1,
+        "modify": 0
+      },
+      "verdict": "reject"
+    },
+    {
+      "work_key": "score suite",
+      "title": "Score Suite",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 2,
+      "votes": {
+        "accept": 0,
+        "reject": 2,
+        "modify": 0
+      },
+      "verdict": "reject"
+    },
+    {
+      "work_key": "soda pop",
+      "title": "Soda Pop",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "strategy",
+      "title": "Strategy",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 2,
+      "votes": {
+        "accept": 2,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "takedown",
+      "title": "Takedown",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "takedown (jeongyeon, jihyo, chaeyoung)",
+      "title": "TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG)",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 2,
+      "votes": {
+        "accept": 2,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "what it sounds like",
+      "title": "What It Sounds Like",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "your idol",
+      "title": "Your Idol",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 5,
+      "votes": {
+        "accept": 5,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "사랑인가 봐 love, maybe",
+      "title": "사랑인가 봐 Love, Maybe",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 2,
+      "votes": {
+        "accept": 2,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    },
+    {
+      "work_key": "오솔길 path",
+      "title": "오솔길 Path",
+      "tag_id": "genre.k-pop",
+      "source": "metadata.album",
+      "instances_with_decision": 2,
+      "votes": {
+        "accept": 2,
+        "reject": 0,
+        "modify": 0
+      },
+      "verdict": "accept"
+    }
+  ]
+}

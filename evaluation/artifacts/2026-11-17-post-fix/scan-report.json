@@ -1,0 +1,12 @@
+{
+  "input_root": "/test-data/music-working/eval-input-ncm-remux",
+  "indexed": 47,
+  "discovered_audio_files": 47,
+  "failures": [],
+  "batch_status": "completed",
+  "with_title": 47,
+  "with_artist": 47,
+  "with_album": 47,
+  "with_genre": 0,
+  "with_year": 0
+}

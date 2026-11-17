@@ -1,0 +1,48 @@
+{
+  "manifest_version": "fixed-set-47-v1",
+  "declared_content_sha256": "181e18b469de4b2ef8e3d8c9b5903b81c44ed5f0820074a40ee4a1eb916988c3",
+  "recomputed_content_sha256": "181e18b469de4b2ef8e3d8c9b5903b81c44ed5f0820074a40ee4a1eb916988c3",
+  "manifest_hash_match": true,
+  "tracks": 47,
+  "manifest_stats": {
+    "tracks": 47,
+    "unique_works": 14,
+    "works_cross_edition": 12,
+    "cross_edition_duplicate_instances": 24,
+    "variant_instances": 21,
+    "variant_works": 7,
+    "deluxe_only_works": 2,
+    "base_version_instances": 26,
+    "works_by_instance_count": {
+      "5": 7,
+      "2": 5,
+      "1": 2
+    },
+    "with_title": 47,
+    "with_artist": 47,
+    "with_album": 47,
+    "with_cover": 47,
+    "with_genre": 0,
+    "with_release_date": 0
+  },
+  "missing_files": [],
+  "hash_or_size_mismatches": [],
+  "core_tag_presence": {
+    "title": 47,
+    "artist": 47,
+    "album": 47,
+    "genre": 0
+  },
+  "tag_keys": {
+    "TIT2": 47,
+    "TPE1": 47,
+    "TALB": 47,
+    "TSSE": 47,
+    "APIC:Cover": 47
+  },
+  "embedded_date_tags": [],
+  "filename_year_matches": [],
+  "title_year_matches": [],
+  "album_year_matches": [],
+  "verification": "PASS"
+}
