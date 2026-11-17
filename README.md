@@ -52,18 +52,20 @@ pytest
 ```bash
 pip install -e .        # pins mutagen==1.48.1
 
-# Step 0 for NetEase libraries: convert .ncm -> FLAC/MP3 first (MUSI-12
-# decoder/CLI; a remux of the embedded stream, sources untouched), then scan
-# the converted tree:
+# Step 0 for NetEase libraries: convert .ncm -> persistent MP3/FLAC (remux of
+# the embedded stream, sources untouched), then scan the converted tree:
+python -m musigtagger.app convert --source ~/Music/ncm --output ~/Music/converted
 python -m musigtagger.app --library-root ~/Music/converted scan
 python -m musigtagger.app serve     # http://127.0.0.1:8765/
 ```
 
-The app scans, stores suggestions, lets you accept/edit/reject in the browser,
-applies reviewed tags with a verified backup of every file, and undoes a batch
-byte-for-byte. Scanning an `.ncm` directory reports those files as needing
-conversion and indexes nothing — the encrypted container is never a write
-target. Details, safety design, and limits: [`docs/APP.md`](docs/APP.md).
+`convert` delegates decoding to MUSI-12's `musigtagger.ncm` converter
+(`--ncm-converter module:Attribute` to override) and writes persistent files,
+never into the source. The app scans, stores suggestions, lets you
+accept/edit/reject in the browser, applies reviewed tags with a verified backup
+of every file, and undoes a batch byte-for-byte. Scanning an `.ncm` directory
+reports those files as needing conversion and indexes nothing — the encrypted
+container is never a write target. Details: [`docs/APP.md`](docs/APP.md).
 
 ## Quick start (contracts only)
 

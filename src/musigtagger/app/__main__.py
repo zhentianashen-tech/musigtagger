@@ -62,6 +62,15 @@ def _common_options(parser: argparse.ArgumentParser) -> None:
         help="scanner as 'module:Attribute' (default: bundled mutagen scanner)",
     )
     parser.add_argument(
+        "--ncm-converter",
+        dest="ncm_converter_spec",
+        default=argparse.SUPPRESS,
+        help=(
+            "NCM decoder as 'module:Attribute' for the convert command "
+            "(default: musigtagger.ncm:convert_file, from MUSI-12)"
+        ),
+    )
+    parser.add_argument(
         "--protect",
         dest="protected_roots",
         action="append",
@@ -96,6 +105,27 @@ def build_parser() -> argparse.ArgumentParser:
     status = subparsers.add_parser("status", help="show index and review counts")
     _common_options(status)
 
+    convert = subparsers.add_parser(
+        "convert", help="convert .ncm containers into a persistent MP3/FLAC tree"
+    )
+    _common_options(convert)
+    convert.add_argument(
+        "--source",
+        default=None,
+        help="directory containing .ncm files (default: library root)",
+    )
+    convert.add_argument(
+        "--output",
+        required=True,
+        help="persistent output directory; must be outside the source tree",
+    )
+    convert.add_argument(
+        "--force", action="store_true", help="overwrite already-converted files"
+    )
+    convert.add_argument(
+        "--limit", type=int, default=None, help="convert at most N files (sample run)"
+    )
+
     apply_cmd = subparsers.add_parser("apply", help="apply reviewed tags")
     _common_options(apply_cmd)
     apply_cmd.add_argument(
@@ -128,6 +158,7 @@ def _args_to_mapping(args: argparse.Namespace) -> dict[str, object]:
         "taxonomy_version",
         "provider_spec",
         "scanner_spec",
+        "ncm_converter_spec",
         "language",
     ):
         value = getattr(args, name, None)
@@ -153,6 +184,34 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as exc:  # noqa: BLE001 - configuration errors are user-facing
         print(f"configuration error: {exc}", file=sys.stderr)
         return 2
+
+    if args.command == "convert":
+        # Step 0 does not need the library database or taxonomy: it only writes
+        # the persistent converted tree that a later scan will index.
+        from .convert import ConversionError, ConversionService, load_converter
+
+        try:
+            converter = load_converter(getattr(args, "ncm_converter_spec", None))
+            report = ConversionService(config, converter).convert_tree(
+                args.source or config.library_root,
+                args.output,
+                force=args.force,
+                limit=args.limit,
+            )
+        except (ConversionError, ProtectedPathError, OSError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(
+            f"convert {report.source_root} -> {report.output_root}: "
+            f"{report.converted_count} converted, {len(report.skipped)} skipped, "
+            f"{len(report.failed)} failed"
+        )
+        for outcome in report.failed[:20]:
+            print(f"  failed {outcome.source}: {outcome.error}")
+        if report.report_path:
+            print(f"report: {report.report_path}")
+        print(f"next: --library-root {report.output_root}")
+        return 0 if not report.failed else 1
 
     if args.command == "serve":
         from .webapp import make_server
@@ -198,9 +257,10 @@ def main(argv: list[str] | None = None) -> int:
             if report.ncm_requires_conversion:
                 print(
                     f"note: {report.ncm_requires_conversion} .ncm file(s) were "
-                    "skipped — conversion is step 0. Convert them to FLAC/MP3 "
-                    "first (NCM decoder CLI), then scan the converted directory "
-                    "with --library-root. The app never tags an encrypted .ncm.",
+                    "skipped — conversion is step 0. Run "
+                    "'python -m musigtagger.app convert --source <dir> "
+                    "--output <persistent dir>' first, then scan that output with "
+                    "--library-root. The app never tags an encrypted .ncm.",
                     file=sys.stderr,
                 )
             for skipped in report.skipped[:20]:

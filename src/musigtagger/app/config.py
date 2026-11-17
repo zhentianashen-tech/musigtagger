@@ -61,6 +61,8 @@ class AppConfig:
     taxonomy_version: str
     provider_spec: str | None = None
     scanner_spec: str | None = None
+    #: NCM decoder used by the batch conversion step (MUSI-12 provides it).
+    ncm_converter_spec: str | None = None
     #: Roots that may be read but never written. The operator's read-only source
     #: library is always protected; extra roots can be added on the command line.
     protected_roots: tuple[Path, ...] = field(
@@ -131,6 +133,11 @@ class AppConfig:
             taxonomy_version=str(values.get("taxonomy_version", "1.0.0")),
             provider_spec=(str(values["provider_spec"]) if values.get("provider_spec") else None),
             scanner_spec=(str(values["scanner_spec"]) if values.get("scanner_spec") else None),
+            ncm_converter_spec=(
+                str(values["ncm_converter_spec"])
+                if values.get("ncm_converter_spec")
+                else None
+            ),
             protected_roots=tuple(unique_protected),
             language=str(values.get("language", "en")),
             actor=str(values.get("actor", "local-user")),

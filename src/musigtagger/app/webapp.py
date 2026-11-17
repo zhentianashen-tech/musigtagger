@@ -301,8 +301,9 @@ class WebApp:
         if report.ncm_requires_conversion:
             message += (
                 f" {report.ncm_requires_conversion} .ncm file(s) need conversion "
-                "first — convert them to FLAC/MP3 and point the scan at that "
-                "directory; the app never tags an encrypted .ncm."
+                "first — run 'python -m musigtagger.app convert --source <dir> "
+                "--output <persistent dir>' and scan that output; the app never "
+                "tags an encrypted .ncm."
             )
         if report.skipped:
             reasons = "; ".join(

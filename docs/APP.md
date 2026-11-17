@@ -54,6 +54,32 @@ survive across runs; those files are the library the app indexes and tags.
 Temporary/transient conversion output is fine for tests only (the test suite
 uses temporary directories and a fake tag codec), never for real tagging work.
 
+The batch step is a built-in command; it delegates decoding to MUSI-12's
+converter (`musigtagger.ncm:convert_file`, configurable with
+`--ncm-converter module:Attribute`) and only orchestrates the tree:
+
+```bash
+# persistent conversion: source -> writable output tree (layout preserved)
+python -m musigtagger.app convert \
+  --source /test-data/music-source \
+  --output /data/library-converted
+
+# sample/testing run (never writes into the source)
+python -m musigtagger.app convert --source /test-data/music-source \
+  --output /test-data/music-working/sample --limit 2
+
+# then the normal workflow operates on the persistent tree
+python -m musigtagger.app --library-root /data/library-converted scan
+```
+
+Properties: source files are never written or moved; hidden files/directories
+are ignored; already-converted outputs are skipped unless `--force`; each file
+is isolated (a broken container is logged and the batch continues); the output
+suffix follows the decoded stream (`.mp3`/`.flac`/`.ogg`), not the source name;
+and `conversion-report.json` in the output tree records every outcome. If the
+decoder is not installed, the command fails with an explicit pointer to MUSI-12
+rather than guessing.
+
 ## Where the pieces are
 
 | Concern | Module |
@@ -62,6 +88,7 @@ uses temporary directories and a fake tag codec), never for real tagging work.
 | SQLite repository (schema v1) | `app/store.py` |
 | Review state machine | `app/review.py` |
 | Scan trigger + provider execution | `app/ingest.py` |
+| Batch `.ncm` → MP3/FLAC conversion (step 0) | `app/convert.py` |
 | Taxonomy loading/labels/validation | `app/taxonomy_service.py` |
 | Taxonomy tag → tag-field projection | `app/tagmap.py` |
 | mutagen tag I/O (only file-tag writer) | `app/tagio.py` |
@@ -195,15 +222,17 @@ The mounted library at `/test-data/music-source` contains **47 `.ncm` files**
 behaviour: conversion is step 0.
 
 The conversion itself belongs to **MUSI-12** (decoder module + CLI, engine
-engineer; one-file-in/one-file-out). I verified the published algorithm against
-the operator's real files read-only: all **47/47** decode to a valid MP3 stream
+engineer; one-file-in/one-file-out). The app's `convert` command loops it over a
+tree into persistent output. I verified the format algorithm against the
+operator's real files read-only: all **47/47** decode to a valid MP3 stream
 (ID3v2.4 tag followed by a valid MPEG frame chain; duration/bitrate consistent
 with the container metadata), with the original files untouched. The payload is
 already MP3, so this is remux — no transcode and no quality loss.
 
-Once MUSI-12 lands: convert into `/test-data/music-working/...` (or any writable
-tree), then run the app with `--library-root` pointing at the converted output.
-The app's scan, review, apply, backup, and undo then operate on real files.
+A two-file sample was converted through the `convert` command into the writable
+working directory to validate the whole step (persistent outputs, valid MP3
+frames, report, and a second run that skips both files). The app's scan,
+review, apply, backup, and undo then operate on the persistent converted tree.
 
 ## Test results
 
@@ -213,7 +242,7 @@ Run offline:
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-- 84 scaffold/contract/taxonomy tests + 78 application tests = **162 tests**.
+- 84 scaffold/contract/taxonomy tests + 90 application tests = **174 tests**.
 - The real-container tests in `tests/test_tagio_mutagen.py` require `mutagen`.
   They are skipped in a runtime without it (they degrade to an explicit skip,
   not a failure). In this runtime `mutagen` is not installed and the environment
