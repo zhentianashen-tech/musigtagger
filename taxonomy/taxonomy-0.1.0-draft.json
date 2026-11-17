@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "version": "0.1.0-draft",
+  "name": "Music Tagger Taxonomy",
+  "description": "Starter vocabulary from Taxonomy Proposal v0 (MUSI-3), encoded for the shared loader contract. Replaced by 1.0.0 when the taxonomy is frozen.",
+  "canonical_label_policy": "native-original-language",
+  "facets": [
+    {
+      "id": "genre",
+      "label": "Genre",
+      "description": "What kind of music this is. Two-level tree, single parent.",
+      "phase1_available": true,
+      "hierarchy": true,
+      "max_depth": 2,
+      "open_set": false
+    },
+    {
+      "id": "mood",
+      "label": "Mood",
+      "description": "How the music feels. Flat; effectively empty under metadata-only Phase 1.",
+      "phase1_available": false,
+      "hierarchy": false,
+      "max_depth": 1,
+      "open_set": false
+    },
+    {
+      "id": "era",
+      "label": "Era",
+      "description": "Decade the music is from. Closed, machine-generable set.",
+      "phase1_available": true,
+      "hierarchy": false,
+      "max_depth": 1,
+      "open_set": false
+    },
+    {
+      "id": "activity",
+      "label": "Activity",
+      "description": "What the music is good for. Flat; human-curated in Phase 1.",
+      "phase1_available": false,
+      "hierarchy": false,
+      "max_depth": 1,
+      "open_set": false
+    },
+    {
+      "id": "origin",
+      "label": "Origin",
+      "description": "Region/culture plus language tags (origin.lang-*). Shallow tree.",
+      "phase1_available": true,
+      "hierarchy": true,
+      "max_depth": 2,
+      "open_set": false
+    },
+    {
+      "id": "personal",
+      "label": "Personal",
+      "description": "User-created organizational tags. Open set, never enumerated by the taxonomy.",
+      "phase1_available": true,
+      "hierarchy": false,
+      "max_depth": 1,
+      "open_set": true
+    }
+  ],
+  "tags": [
+    {
+      "id": "genre.rock",
+      "facet": "genre",
+      "canonical_label": "Rock",
+      "labels": { "en": "Rock", "zh": "摇滚" },
+      "aliases": ["Rock Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.rock.progressive-rock",
+      "facet": "genre",
+      "canonical_label": "Progressive Rock",
+      "labels": { "en": "Progressive Rock", "zh": "前卫摇滚" },
+      "aliases": ["Prog Rock", "Progressive"],
+      "parent": "genre.rock"
+    },
+    {
+      "id": "genre.rock.punk",
+      "facet": "genre",
+      "canonical_label": "Punk",
+      "labels": { "en": "Punk", "zh": "朋克" },
+      "aliases": ["Punk Rock"],
+      "parent": "genre.rock"
+    },
+    {
+      "id": "genre.rock.alternative-rock",
+      "facet": "genre",
+      "canonical_label": "Alternative Rock",
+      "labels": { "en": "Alternative Rock", "zh": "另类摇滚" },
+      "aliases": ["Alt. Rock", "Alt Rock", "Alternative"],
+      "parent": "genre.rock"
+    },
+    {
+      "id": "genre.pop",
+      "facet": "genre",
+      "canonical_label": "Pop",
+      "labels": { "en": "Pop", "zh": "流行" },
+      "aliases": ["Pop Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.hip-hop",
+      "facet": "genre",
+      "canonical_label": "Hip-hop",
+      "labels": { "en": "Hip-hop", "zh": "嘻哈" },
+      "aliases": ["Hip Hop", "Rap"],
+      "parent": null
+    },
+    {
+      "id": "genre.hip-hop.trap",
+      "facet": "genre",
+      "canonical_label": "Trap",
+      "labels": { "en": "Trap", "zh": "陷阱音乐" },
+      "aliases": ["Trap Music"],
+      "parent": "genre.hip-hop"
+    },
+    {
+      "id": "genre.jazz",
+      "facet": "genre",
+      "canonical_label": "Jazz",
+      "labels": { "en": "Jazz", "zh": "爵士" },
+      "aliases": ["Jazz Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.jazz.bebop",
+      "facet": "genre",
+      "canonical_label": "Bebop",
+      "labels": { "en": "Bebop" },
+      "aliases": ["Bop"],
+      "parent": "genre.jazz"
+    },
+    {
+      "id": "genre.blues",
+      "facet": "genre",
+      "canonical_label": "Blues",
+      "labels": { "en": "Blues", "zh": "蓝调" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "genre.electronic",
+      "facet": "genre",
+      "canonical_label": "Electronic",
+      "labels": { "en": "Electronic", "zh": "电子" },
+      "aliases": ["Electronic Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.electronic.house",
+      "facet": "genre",
+      "canonical_label": "House",
+      "labels": { "en": "House" },
+      "aliases": ["House Music"],
+      "parent": "genre.electronic"
+    },
+    {
+      "id": "genre.electronic.techno",
+      "facet": "genre",
+      "canonical_label": "Techno",
+      "labels": { "en": "Techno" },
+      "aliases": [],
+      "parent": "genre.electronic"
+    },
+    {
+      "id": "genre.electronic.ambient",
+      "facet": "genre",
+      "canonical_label": "Ambient",
+      "labels": { "en": "Ambient", "zh": "氛围音乐" },
+      "aliases": ["Ambient Music"],
+      "parent": "genre.electronic"
+    },
+    {
+      "id": "genre.electronic.dark-ambient",
+      "facet": "genre",
+      "canonical_label": "Dark Ambient",
+      "labels": { "en": "Dark Ambient" },
+      "aliases": [],
+      "parent": "genre.electronic"
+    },
+    {
+      "id": "genre.classical",
+      "facet": "genre",
+      "canonical_label": "Classical",
+      "labels": { "en": "Classical", "zh": "古典" },
+      "aliases": ["Western Classical"],
+      "parent": null
+    },
+    {
+      "id": "genre.classical.symphony",
+      "facet": "genre",
+      "canonical_label": "Symphony",
+      "labels": { "en": "Symphony", "zh": "交响乐" },
+      "aliases": [],
+      "parent": "genre.classical"
+    },
+    {
+      "id": "genre.classical.opera",
+      "facet": "genre",
+      "canonical_label": "Opera",
+      "labels": { "en": "Opera", "zh": "歌剧" },
+      "aliases": [],
+      "parent": "genre.classical"
+    },
+    {
+      "id": "genre.country",
+      "facet": "genre",
+      "canonical_label": "Country",
+      "labels": { "en": "Country" },
+      "aliases": ["Country Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.folk",
+      "facet": "genre",
+      "canonical_label": "Folk",
+      "labels": { "en": "Folk", "zh": "民谣" },
+      "aliases": ["Folk Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.soul",
+      "facet": "genre",
+      "canonical_label": "Soul",
+      "labels": { "en": "Soul" },
+      "aliases": ["Soul Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.funk",
+      "facet": "genre",
+      "canonical_label": "Funk",
+      "labels": { "en": "Funk" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "genre.reggae",
+      "facet": "genre",
+      "canonical_label": "Reggae",
+      "labels": { "en": "Reggae" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "genre.latin",
+      "facet": "genre",
+      "canonical_label": "Latin",
+      "labels": { "en": "Latin", "zh": "拉丁" },
+      "aliases": ["Latin Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.world",
+      "facet": "genre",
+      "canonical_label": "World",
+      "labels": { "en": "World" },
+      "aliases": ["World Music"],
+      "parent": null
+    },
+    {
+      "id": "genre.world.afrobeat",
+      "facet": "genre",
+      "canonical_label": "Afrobeat",
+      "labels": { "en": "Afrobeat" },
+      "aliases": [],
+      "parent": "genre.world"
+    },
+    {
+      "id": "genre.rnb",
+      "facet": "genre",
+      "canonical_label": "R&B",
+      "labels": { "en": "R&B", "zh": "节奏布鲁斯" },
+      "aliases": ["Rhythm and Blues", "R'n'B"],
+      "parent": null
+    },
+    {
+      "id": "genre.metal",
+      "facet": "genre",
+      "canonical_label": "Metal",
+      "labels": { "en": "Metal", "zh": "金属" },
+      "aliases": ["Heavy Metal"],
+      "parent": null
+    },
+
+    {
+      "id": "mood.energetic",
+      "facet": "mood",
+      "canonical_label": "Energetic",
+      "labels": { "en": "Energetic" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.calm",
+      "facet": "mood",
+      "canonical_label": "Calm",
+      "labels": { "en": "Calm", "zh": "平静" },
+      "aliases": ["Chill"],
+      "parent": null
+    },
+    {
+      "id": "mood.melancholy",
+      "facet": "mood",
+      "canonical_label": "Melancholy",
+      "labels": { "en": "Melancholy" },
+      "aliases": ["Sad"],
+      "parent": null
+    },
+    {
+      "id": "mood.uplifting",
+      "facet": "mood",
+      "canonical_label": "Uplifting",
+      "labels": { "en": "Uplifting" },
+      "aliases": ["Happy"],
+      "parent": null
+    },
+    {
+      "id": "mood.dark",
+      "facet": "mood",
+      "canonical_label": "Dark",
+      "labels": { "en": "Dark" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.dreamy",
+      "facet": "mood",
+      "canonical_label": "Dreamy",
+      "labels": { "en": "Dreamy" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.aggressive",
+      "facet": "mood",
+      "canonical_label": "Aggressive",
+      "labels": { "en": "Aggressive" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.romantic",
+      "facet": "mood",
+      "canonical_label": "Romantic",
+      "labels": { "en": "Romantic" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.playful",
+      "facet": "mood",
+      "canonical_label": "Playful",
+      "labels": { "en": "Playful" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.nostalgic",
+      "facet": "mood",
+      "canonical_label": "Nostalgic",
+      "labels": { "en": "Nostalgic" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.tense",
+      "facet": "mood",
+      "canonical_label": "Tense",
+      "labels": { "en": "Tense" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.ethereal",
+      "facet": "mood",
+      "canonical_label": "Ethereal",
+      "labels": { "en": "Ethereal" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.groovy",
+      "facet": "mood",
+      "canonical_label": "Groovy",
+      "labels": { "en": "Groovy" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.somber",
+      "facet": "mood",
+      "canonical_label": "Somber",
+      "labels": { "en": "Somber" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.triumphant",
+      "facet": "mood",
+      "canonical_label": "Triumphant",
+      "labels": { "en": "Triumphant" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "mood.bittersweet",
+      "facet": "mood",
+      "canonical_label": "Bittersweet",
+      "labels": { "en": "Bittersweet" },
+      "aliases": [],
+      "parent": null
+    },
+
+    {
+      "id": "era.1950s",
+      "facet": "era",
+      "canonical_label": "1950s",
+      "labels": { "en": "1950s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.1960s",
+      "facet": "era",
+      "canonical_label": "1960s",
+      "labels": { "en": "1960s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.1970s",
+      "facet": "era",
+      "canonical_label": "1970s",
+      "labels": { "en": "1970s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.1980s",
+      "facet": "era",
+      "canonical_label": "1980s",
+      "labels": { "en": "1980s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.1990s",
+      "facet": "era",
+      "canonical_label": "1990s",
+      "labels": { "en": "1990s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.2000s",
+      "facet": "era",
+      "canonical_label": "2000s",
+      "labels": { "en": "2000s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.2010s",
+      "facet": "era",
+      "canonical_label": "2010s",
+      "labels": { "en": "2010s" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "era.2020s",
+      "facet": "era",
+      "canonical_label": "2020s",
+      "labels": { "en": "2020s" },
+      "aliases": [],
+      "parent": null
+    },
+
+    {
+      "id": "activity.workout",
+      "facet": "activity",
+      "canonical_label": "Workout",
+      "labels": { "en": "Workout" },
+      "aliases": ["Work Out"],
+      "parent": null
+    },
+    {
+      "id": "activity.focus",
+      "facet": "activity",
+      "canonical_label": "Focus",
+      "labels": { "en": "Focus" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.sleep",
+      "facet": "activity",
+      "canonical_label": "Sleep",
+      "labels": { "en": "Sleep" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.party",
+      "facet": "activity",
+      "canonical_label": "Party",
+      "labels": { "en": "Party" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.commute",
+      "facet": "activity",
+      "canonical_label": "Commute",
+      "labels": { "en": "Commute" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.cooking",
+      "facet": "activity",
+      "canonical_label": "Cooking",
+      "labels": { "en": "Cooking" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.background",
+      "facet": "activity",
+      "canonical_label": "Background",
+      "labels": { "en": "Background" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.dance",
+      "facet": "activity",
+      "canonical_label": "Dance",
+      "labels": { "en": "Dance" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.sing-along",
+      "facet": "activity",
+      "canonical_label": "Sing-along",
+      "labels": { "en": "Sing-along" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "activity.kids",
+      "facet": "activity",
+      "canonical_label": "Kids",
+      "labels": { "en": "Kids" },
+      "aliases": [],
+      "parent": null
+    },
+
+    {
+      "id": "origin.africa",
+      "facet": "origin",
+      "canonical_label": "Africa",
+      "labels": { "en": "Africa" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.africa.west-africa",
+      "facet": "origin",
+      "canonical_label": "West Africa",
+      "labels": { "en": "West Africa" },
+      "aliases": [],
+      "parent": "origin.africa"
+    },
+    {
+      "id": "origin.asia",
+      "facet": "origin",
+      "canonical_label": "Asia",
+      "labels": { "en": "Asia" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.asia.east-asia",
+      "facet": "origin",
+      "canonical_label": "East Asia",
+      "labels": { "en": "East Asia" },
+      "aliases": [],
+      "parent": "origin.asia"
+    },
+    {
+      "id": "origin.asia.south-asia",
+      "facet": "origin",
+      "canonical_label": "South Asia",
+      "labels": { "en": "South Asia" },
+      "aliases": [],
+      "parent": "origin.asia"
+    },
+    {
+      "id": "origin.europe",
+      "facet": "origin",
+      "canonical_label": "Europe",
+      "labels": { "en": "Europe" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.europe.andalusia",
+      "facet": "origin",
+      "canonical_label": "Andalusia",
+      "labels": { "en": "Andalusia" },
+      "aliases": [],
+      "parent": "origin.europe"
+    },
+    {
+      "id": "origin.north-america",
+      "facet": "origin",
+      "canonical_label": "North America",
+      "labels": { "en": "North America" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.south-america",
+      "facet": "origin",
+      "canonical_label": "South America",
+      "labels": { "en": "South America" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.south-america.brazil",
+      "facet": "origin",
+      "canonical_label": "Brazil",
+      "labels": { "en": "Brazil" },
+      "aliases": [],
+      "parent": "origin.south-america"
+    },
+    {
+      "id": "origin.lang-deu",
+      "facet": "origin",
+      "canonical_label": "German",
+      "labels": { "en": "German", "de": "Deutsch" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.lang-eng",
+      "facet": "origin",
+      "canonical_label": "English",
+      "labels": { "en": "English" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.lang-nya",
+      "facet": "origin",
+      "canonical_label": "Nyanja",
+      "labels": { "en": "Nyanja" },
+      "aliases": [],
+      "parent": null
+    },
+    {
+      "id": "origin.lang-por",
+      "facet": "origin",
+      "canonical_label": "Portuguese",
+      "labels": { "en": "Portuguese", "pt": "Português" },
+      "aliases": [],
+      "parent": null
+    }
+  ]
+}

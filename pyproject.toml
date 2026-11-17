@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "musigtagger"
+version = "0.1.0"
+description = "Local, metadata-first music tagger: Phase 1 scaffold and shared contracts."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Music Tagger squad" }]
+keywords = ["music", "tags", "metadata", "mutagen", "sqlite"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  # Pinned deliberately: tag I/O is the highest-risk dependency in Phase 1.
+  "mutagen==1.48.1",
+]
+
+[project.optional-dependencies]
+# YAML taxonomy files are readable only when this extra is installed; the
+# canonical, committed form of the taxonomy is JSON (see taxonomy/FORMAT.md).
+yaml = ["PyYAML>=6.0"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"musigtagger.db" = ["*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
