@@ -236,6 +236,10 @@ class MutagenScanner:
 def _format_name(audio: object) -> str | None:
     mapping = {
         "MP3": "mp3",
+        # ``mutagen.File(easy=True)`` yields ``EasyMP3`` for MP3 containers, not
+        # ``MP3``; without this entry the descriptor reports ``easymp3`` and the
+        # write path refuses it (MUSI-15 finding 1).
+        "EasyMP3": "mp3",
         "FLAC": "flac",
         "OggVorbis": "ogg",
         "OggOpus": "opus",
