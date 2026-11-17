@@ -147,6 +147,14 @@ class MutagenTagger:
             keys = list(tags.keys())
         except AttributeError:
             return {}
+        # Vorbis comment keys are case-insensitive and mutagen normalises them to
+        # lowercase in ``keys()``; the application's canonical field names are
+        # uppercase (``GENRE``, ``ERA``, …), so restore that form on read.
+        if type(tags).__name__ in ("VCommentDict", "VCFLACDict"):
+            return {
+                str(key).upper(): [str(value) for value in tags[key]]
+                for key in keys
+            }
         return {str(key): [str(value) for value in tags[key]] for key in keys}
 
     def write(self, path: str | Path, fields: Mapping[str, Sequence[str]]) -> None:
