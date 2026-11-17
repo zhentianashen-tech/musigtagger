@@ -1,5 +1,9 @@
 # v0.2 baseline acceptance (operator) — 2026-11-17
 
+**Update 2026-11-17T12:13Z:** option A executed — the safety smoke passed, so
+all five approved bars now pass. The networked date check remains the only
+precondition.
+
 **Accepted:** the operator's reply "your recommendation is accepted" on MUSI-9
 (comment `01a1e963-dcea-7704-b122-fc9f8e6bd098`, 2026-11-17T12:03:18Z) accepts
 the recommendation attached to the v0.2 baseline report.
@@ -17,15 +21,20 @@ the recommendation attached to the v0.2 baseline report.
 - The 3 rejects (`Score Suite` ×2, `Prologue`) are accepted as the expected
   film-score false positives; the taxonomy v1.1 follow-up remains the agreed
   post-acceptance work.
+- **Safety is accepted on the option-A scope** (operator: "go with A"): a
+  2-track copy-based smoke through the real application write path — backup
+  before write, tags written, undo byte-exact, source untouched — passes all
+  three harness safety checks. Evidence: `../2026-11-17-safety-smoke/`.
 - **One networked date check is required before final Phase-1 acceptance.**
   This is the only outstanding v0.2 evaluation precondition. It does not block
   the MUSI-8 review or the MUSI-10 integration pass.
 
 ## What is not accepted / still open
 
-- **Safety is not satisfied** by this audit run: no apply / backup / undo batch
-  was exercised. Safety remains pending the MUSI-8 write-path review and the
-  MUSI-10 integration pass.
+- Safety is satisfied for the option-A scope only (2 tracks, MP3/ID3); the
+  leader's MUSI-8 review and the MUSI-10 integration pass still cover full app
+  behaviour. There is no remaining safety blocker for Phase-1 acceptance at the
+  agreed scope.
 - The **era recall number itself** is not yet measured; the 65.9% instance /
   65% work forecast remains a forecast until the networked check runs.
 - Final Phase-1 acceptance (MUSI-7/8/12/13/14 + MUSI-9) remains the operator's
@@ -75,6 +84,8 @@ expected offline behavior, proving it cannot pass without egress.
 - `hand-check.jsonl`, `worksheet.jsonl`, `engine-events.jsonl` — decisions and
   real event stream.
 - `egress-check.txt` — DNS/TCP/API evidence for the blocked network.
+- `../2026-11-17-safety-smoke/` — option-A safety evidence: safety-evidence
+  JSONL, app event stream, smoke report, RUN.md.
 - `networked-date-check-offline-smoke.json` — tool smoke test in this runtime:
   `status: network_unavailable`, 16 pairs, 47 network errors, exit 3.
 - Operator sign-off for thresholds: `../2026-11-17-operator-signoff.md`.

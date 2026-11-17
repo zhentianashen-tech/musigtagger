@@ -1,0 +1,36 @@
+{
+  "schema": "musigtagger.safety-smoke.v1",
+  "ran_at": "2026-11-17T12:13:24.406Z",
+  "work_root": "/test-data/music-working/safety-smoke-20261117T121323Z",
+  "samples": [
+    "/test-data/music-working/eval-input-ncm-remux/Saja Boys,Andrew 崔,Neckwav - Soda Pop.mp3",
+    "/test-data/music-working/eval-input-ncm-remux/TWICE - Strategy.mp3"
+  ],
+  "apply_batch_id": 1,
+  "apply_status": "completed",
+  "undo_batch_id": 2,
+  "undo_status": "completed",
+  "backups": 2,
+  "evidence_path": "/test-data/music-working/safety-smoke-20261117T121323Z/safety-evidence.jsonl",
+  "safety_checks": [
+    {
+      "name": "source-root protection (zero writes to music-source)",
+      "passed": true,
+      "detail": "no write records under /test-data/music-source"
+    },
+    {
+      "name": "backup exists before every write batch",
+      "passed": true,
+      "detail": "every write record is preceded by a backup record"
+    },
+    {
+      "name": "undo restores prior state",
+      "passed": true,
+      "detail": "all undo operations succeeded and cover the written tracks"
+    }
+  ],
+  "source_hashes_unchanged": true,
+  "files_restored_byte_exact": true,
+  "failures": [],
+  "passed": true
+}

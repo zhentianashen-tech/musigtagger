@@ -15,7 +15,7 @@
 | Coverage (tracks with ≥1 usable tag) | 93.6% (44/47) | ≥ 85% | ✅ meets threshold (APPROVED — operator sign-off 2026-11-17) |
 | Batch completion rate | 100.0% (1/1) | = 100% | ✅ meets threshold (APPROVED — operator sign-off 2026-11-17) |
 | Taxonomy conformance | 100.0% (47 tag refs checked) | = 100% | ✅ meets threshold (APPROVED — operator sign-off 2026-11-17) |
-| Safety (source protection / backup / undo) | FAIL | zero violations | ❌ fails threshold (APPROVED — operator sign-off 2026-11-17) |
+| Safety (source protection / backup / undo) | all checks passed | zero violations | ✅ meets threshold (APPROVED — operator sign-off 2026-11-17) |
 
 ## 1. Suggestion precision per category (primary metric)
 
@@ -90,11 +90,13 @@
 
 ## 6. Safety
 
-- Evidence records read: 0
+- Evidence records read: 8
 
 | Check | Result | Detail |
 |---|---|---|
-| safety evidence present | ❌ FAIL | no backup/write/undo evidence supplied — safety is unverified, which fails the report by design |
+| source-root protection (zero writes to music-source) | ✅ pass | no write records under /test-data/music-source |
+| backup exists before every write batch | ✅ pass | every write record is preceded by a backup record |
+| undo restores prior state | ✅ pass | all undo operations succeeded and cover the written tracks |
 
 Approved thresholds: zero writes to the source library, zero corruption incidents, undo verified on every sampled case (APPROVED — operator sign-off 2026-11-17).
 
@@ -108,7 +110,7 @@ Approved thresholds: zero writes to the source library, zero corruption incident
 |---|---|---|---|
 | high | evaluation-data problem | Runtime has no egress to musicbrainz.org: 16/16 network lookups failed with 'No route to host'; era recall is unmeasured, not zero-in-principle | Evaluation & Review Agent / runtime infrastructure |
 | medium | taxonomy/specification problem | Album-level genre.k-pop is a false positive on the 3 film-score instances; taxonomy v1.0.0 has no soundtrack/film-score genre | Taxonomy Designer / Lead (post-acceptance v1.1) |
-| info | evaluation-data problem | All four approved quality bars pass on this run; safety remains unverified because no apply/backup/undo batch was exercised (MUSI-8 dependency) | Evaluation & Review Agent |
+| info | evaluation-data problem | All five approved bars now pass: the four quality bars on the 47-track baseline, and safety on the operator-approved 2-track copy smoke (apply / backup / byte-exact undo) | Evaluation & Review Agent |
 | info | tagging-engine defect | Offline degradation verified: batch completes with 47 logged abstentions, zero hangs, local suggestions unaffected | Tagging Engine Engineer |
 
 ### Reproduction evidence
@@ -118,8 +120,8 @@ Approved thresholds: zero writes to the source library, zero corruption incident
   - Reproduction: curl -sS --max-time 10 https://musicbrainz.org/ws/2/release-group/ → connect: No route to host
 - **Album-level genre.k-pop is a false positive on the 3 film-score instances; taxonomy v1.0.0 has no soundtrack/film-score genre**
   - Evidence: Score Suite (2 instances) and Prologue (1) are orchestral film-score cues on a Korean soundtrack album; the provider suggests genre.k-pop from album evidence. The hand-check rejects all 3 (expected genre.orchestral). This is the recorded v1.1 taxonomy gap (ballad/soundtrack/film-score), deferred to post-acceptance by operator decision.
-- **All four approved quality bars pass on this run; safety remains unverified because no apply/backup/undo batch was exercised (MUSI-8 dependency)**
-  - Evidence: Precision 93.6% (44/47) vs >=75%; coverage 93.6% (44/47) vs >=85%; batch completion 100% (1/1); taxonomy conformance 100% (47 tag refs). Safety: no safety evidence supplied, so the report fails safety by design, not from a measured violation.
+- **All five approved bars now pass: the four quality bars on the 47-track baseline, and safety on the operator-approved 2-track copy smoke (apply / backup / byte-exact undo)**
+  - Evidence: Precision 93.6% (44/47) vs >=75%; coverage 93.6% (44/47) vs >=85%; batch completion 100% (1/1); taxonomy conformance 100% (47 tag refs). Safety: 2-track copy smoke through the real app write path — backup before write, undo byte-exact, source untouched; all three harness checks pass. Evidence: evaluation/artifacts/2026-11-17-safety-smoke/.
 - **Offline degradation verified: batch completes with 47 logged abstentions, zero hangs, local suggestions unaffected**
   - Evidence: MUSI-14 provider with network down: per-pair memoization limited the run to 16 attempts, every track was skipped-and-logged, the scan/quality batch completed 1/1, and the 47 local genre suggestions were unaffected.
 
@@ -146,6 +148,9 @@ Approved thresholds: zero writes to the source library, zero corruption incident
   (`content_sha256 181e18b4…`).
 - **Pre-labels:** 14 works / 47 instances, plan v0.2 in force.
 - **Network run id:** `v0.2-network` (0 suggestions, 47 abstentions).
+- **Safety evidence:** `evaluation/artifacts/2026-11-17-safety-smoke/` — real app
+  write path on 2 copies: 2 backups, 2 writes, 2 byte-exact undos; source hashes
+  unchanged; all three harness safety checks pass.
 - **Runtime egress:** **blocked**. `musicbrainz.org:443` resolves but has no
   route; 16/16 unique lookup pairs failed in 49.5s, 47/47 tracks abstained with
   logged `NetworkLookupError`, zero hangs. The local suggestions were
@@ -163,7 +168,7 @@ expected-tag recall is report-only.
 | Coverage | 93.6% (44/47) | PASS (>=85%) |
 | Batch completion | 100% (1/1) | PASS |
 | Taxonomy conformance | 100% (94 refs) | PASS |
-| Safety | unverified (no write batch) | FAIL by design — pending MUSI-8 |
+| Safety | 3/3 checks pass on a 2-track copy smoke | PASS (option A scope) |
 
 ## 13. Recall forecast if egress were available
 

@@ -1,9 +1,10 @@
 # Plan v0.2 baseline run — 2026-11-17
 
-**Status: baseline executed on the merged `main`; the four approved quality
-bars are accepted by the operator (2026-11-17T12:03:18Z), safety is unverified,
-and era recall is recorded as "unmeasured — runtime egress". One networked date
-check remains before final Phase-1 acceptance (see `ACCEPTANCE.md`).**
+**Status: baseline executed on the merged `main`; the four quality bars are
+accepted by the operator (2026-11-17T12:03:18Z), the safety gate is satisfied by
+the option-A 2-track copy smoke (all five approved bars now pass), and era recall
+is recorded as "unmeasured — runtime egress". One networked date check remains
+before final Phase-1 acceptance (see `ACCEPTANCE.md`).**
 
 ## Engine build and input
 
@@ -42,7 +43,7 @@ PYTHONPATH=src:evaluation python evaluation/tools/run_v0_2_baseline.py eval-run-
 | Coverage | 93.6% (44/47) | **PASS** (≥85%) |
 | Batch completion | 100% (1/1) | **PASS** |
 | Taxonomy conformance | 100% (47 refs) | **PASS** |
-| Safety | unverified (no write batch) | **FAIL by design** — pending MUSI-8 |
+| Safety | 3/3 checks pass on a 2-track copy smoke (option A) | **PASS** |
 
 Recall (report-only): genre 93.6% (44/47), era **0/47**, origin 0/44, overall
 **31.9% instance / 30.0% work-level**. Era is not a provider-logic failure:
@@ -61,8 +62,10 @@ required before final Phase-1 acceptance.** Record: `ACCEPTANCE.md`
 (operator comment `01a1e963-dcea-7704-b122-fc9f8e6bd098`). The check tool is
 `evaluation/tools/networked_date_check.py`, runbook in `ACCEPTANCE.md`.
 
-Safety remains pending the MUSI-8 apply/backup/undo exercise and is not
-satisfied by this audit run.
+Safety is satisfied for the operator-approved option-A scope by the
+`2026-11-17-safety-smoke/` run: real app write path on 2 copies, backup before
+write, byte-exact undo, source untouched, all three harness checks pass. The
+leader's MUSI-8 review and MUSI-10 integration still cover full app behaviour.
 
 ## Artifacts
 
@@ -71,3 +74,4 @@ satisfied by this audit run.
 - `worksheet.jsonl` / `hand-check.jsonl` — generated worksheet and decisions
 - `suggestions.json`, `scan-report.json`, `batches.json`
 - `egress-check.txt` — DNS/TCP/API evidence and provider run summary
+- `../2026-11-17-safety-smoke/` — option-A safety evidence (apply/backup/undo)

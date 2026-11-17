@@ -142,8 +142,10 @@ not the v0.2 baseline.
 
 **Baseline executed 2026-11-17** on `main` `5354663` (MUSI-14 merge of
 `edc827d`). Result: precision 93.6% (44/47), coverage 93.6% (44/47), batch
-completion 100%, conformance 100% — **all four approved quality bars pass**.
-Safety remains unverified (pending MUSI-8). Era recall is **unmeasured**: this
+completion 100%, conformance 100% — **all five approved bars now pass**: the
+option-A 2-track copy smoke satisfied the safety gate (backup, write, byte-exact
+undo, source untouched; `artifacts/2026-11-17-safety-smoke/`). Era recall is
+**unmeasured**: this
 runtime has no route to `musicbrainz.org`, so 16/16 lookup pairs failed and
 47/47 tracks abstained with logged `NetworkLookupError` (zero hangs). Overall
 report-only recall is 31.9% instance / 30.0% work-level; the date-resolved
@@ -204,6 +206,11 @@ There are no open evaluation-side questions blocking the baseline.
   era recall recorded "unmeasured — runtime egress"; one networked date check
   remains before final Phase-1 acceptance. Record:
   `artifacts/2026-11-17-v0.2-baseline/ACCEPTANCE.md`.
+- 2026-11-17 12:13Z — operator chooses safety option A; the 2-track copy smoke
+  through the real app write path passes all three safety checks (backup,
+  byte-exact undo, source untouched). All five approved bars now pass; the
+  networked date check is the only remaining precondition. Evidence:
+  `artifacts/2026-11-17-safety-smoke/`.
 
 ## 9. What was deliberately not done
 
