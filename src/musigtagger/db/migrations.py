@@ -17,13 +17,18 @@ from importlib import resources
 from pathlib import Path
 from typing import Final
 
-SCHEMA_VERSION: Final[int] = 1
+SCHEMA_VERSION: Final[int] = 2
 
 #: version -> (human description, packaged SQL file)
 _MIGRATIONS: Final[dict[int, tuple[str, str]]] = {
     1: (
         "schema v1: library index, review state, write batches with backups",
         "schema_v1.sql",
+    ),
+    2: (
+        "schema v2: additive release-date lookup cache for the network provider "
+        "(MUSI-14, escalated and approved via that issue)",
+        "schema_v2.sql",
     ),
 }
 

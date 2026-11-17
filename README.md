@@ -99,6 +99,29 @@ The migrated schema includes `tracks`, `suggestions` (five review states),
 `write_batches`, `tag_backups`, `library_meta`, and the
 `schema_migrations` audit table. See `src/musigtagger/db/schema_v1.sql`.
 
+## Minimal network release-date lookup (MusicBrainz)
+
+One operator-approved network capability ships in Phase 1: the engine can
+look up an album + artist pair on the open MusicBrainz API, take the release
+group's **first** release year, and propose the matching `era.<decade>s` tag
+(`source=network.musicbrainz`, confidence **0.85** — a proposal below the
+embedded-metadata 0.98, for evaluation tuning). Lookups are cached in the
+library database (additive **schema migration v2**, `release_date_cache`) so
+a 47-file batch makes ~14–16 network queries, paced at ~1 req/s. Network
+unavailability, timeouts, rate limits, and no-match are honest abstentions:
+the provider skips with a logged reason and the batch continues; with the
+network off the run is exactly the pre-network behaviour. Requests carry
+only the album/artist query strings — no personal data, no file contents.
+Endpoints, matching rules, and failure behaviour:
+[`docs/musicbrainz-lookup.md`](docs/musicbrainz-lookup.md).
+
+Suggest from the command line (prints proposals and abstentions, never
+writes audio files):
+
+```bash
+musigtagger-suggest /path/to/music [--library library.sqlite3] [--no-network]
+```
+
 ## NCM input
 
 Decode one local NetEase Cloud Music file losslessly (no transcoding):
@@ -136,6 +159,7 @@ tests/                       test suite
 | Repo scaffold, contracts v1, taxonomy loader, schema v1 | this issue (MUSI-6) | delivered |
 | Taxonomy v1.0.0 data | MUSI-5 | delivered |
 | Library scanner + metadata suggestion provider | MUSI-7 | delivered |
+| Minimal network release-date lookup (MusicBrainz, schema v2 cache) | MUSI-14 | delivered |
 | Review web app + safe tag write / backup / undo | MUSI-8 | next stage |
 
 Phase 2 (audio analysis) and Phase 3 (network enrichment) add providers behind
