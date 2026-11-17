@@ -1,0 +1,32 @@
+{
+  "schema": "musigtagger.prelabels.validation.v0.2",
+  "checked_at": "2026-11-17T11:20:55+00:00",
+  "manifest_sha256": "181e18b469de4b2ef8e3d8c9b5903b81c44ed5f0820074a40ee4a1eb916988c3",
+  "works": 14,
+  "instances": 47,
+  "genre_primary_counts": {
+    "genre.k-pop": 44,
+    "genre.orchestral": 3
+  },
+  "era_counts": {
+    "era.2020s": 47
+  },
+  "origin_counts": {
+    "origin.east-asia": 44,
+    "(none)": 3
+  },
+  "release_year_counts": {
+    "2025": 43,
+    "2024": 2,
+    "2022": 2
+  },
+  "disclosed_rows": 5,
+  "tag_usage": {
+    "genre.k-pop": 12,
+    "era.2020s": 14,
+    "origin.east-asia": 12,
+    "genre.orchestral": 2
+  },
+  "issues": [],
+  "valid": true
+}

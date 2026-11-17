@@ -1,0 +1,381 @@
+{
+  "summary": {
+    "descriptors": 47,
+    "unique_works": 35,
+    "tracks_with_suggestion": 5,
+    "total_suggestions": 5,
+    "by_tag": {
+      "genre.pop": 5
+    },
+    "by_source": {
+      "metadata.path": 5
+    },
+    "note": "NCM metadata has title/artist/album but no genre and no release date. The provider consumes only descriptor.genre, descriptor.year and the path, so the metadata-bearing library yields the same 5 path-word suggestions as the tagless FLAC set."
+  },
+  "tracks": [
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Golden (Acapella).ncm",
+      "title": "Golden (Acapella)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Golden (Instrumental).ncm",
+      "title": "Golden (Instrumental)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Golden (Sing-Along).ncm",
+      "title": "Golden (Sing-Along)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Golden.ncm",
+      "title": "Golden",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - How It’s Done (Acapella).ncm",
+      "title": "How It’s Done (Acapella)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - How It’s Done (Instrumental).ncm",
+      "title": "How It’s Done (Instrumental)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - How It’s Done (Sing-Along).ncm",
+      "title": "How It’s Done (Sing-Along)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - How It’s Done.ncm",
+      "title": "How It’s Done",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Takedown (Acapella).ncm",
+      "title": "Takedown (Acapella)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Takedown (Instrumental).ncm",
+      "title": "Takedown (Instrumental)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Takedown (Sing-Along).ncm",
+      "title": "Takedown (Sing-Along)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - Takedown.ncm",
+      "title": "Takedown",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like (Acapella).ncm",
+      "title": "What It Sounds Like (Acapella)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like (Instrumental).ncm",
+      "title": "What It Sounds Like (Instrumental)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like (Sing-Along).ncm",
+      "title": "What It Sounds Like (Sing-Along)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,AUDREY NUNA - What It Sounds Like.ncm",
+      "title": "What It Sounds Like",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,Audrey Nuna - Golden (1).ncm",
+      "title": "Golden",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,Audrey Nuna - How It’s Done (1).ncm",
+      "title": "How It’s Done",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,Audrey Nuna - Takedown (1).ncm",
+      "title": "Takedown",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "HUNTR／X,EJAE,Audrey Nuna - What It Sounds Like (1).ncm",
+      "title": "What It Sounds Like",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Jinu,Ahn Hyo-seop - Jinu’s Lament.ncm",
+      "title": "Jinu’s Lament",
+      "artist": "Jinu/Ahn Hyo-seop",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Jokers - 오솔길 Path.ncm",
+      "title": "오솔길 Path",
+      "artist": "Jokers",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Marcelo Zarvos - Score Suite (1).ncm",
+      "title": "Score Suite",
+      "artist": "Marcelo Zarvos",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Marcelo Zarvos - Score Suite.ncm",
+      "title": "Score Suite",
+      "artist": "Marcelo Zarvos",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Marcelo Zarvos,EJAE - Prologue (Hunter’s Mantra).ncm",
+      "title": "Prologue (Hunter’s Mantra)",
+      "artist": "Marcelo Zarvos/EJAE",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "MeloMance - 사랑인가 봐 Love, Maybe (1).ncm",
+      "title": "사랑인가 봐 Love, Maybe",
+      "artist": "MeloMance",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "MeloMance - 사랑인가 봐 Love, Maybe.ncm",
+      "title": "사랑인가 봐 Love, Maybe",
+      "artist": "MeloMance",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Rumi,Jinu,EJAE - Free (1).ncm",
+      "title": "Free",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Rumi,Jinu,EJAE - Free (Acapella).ncm",
+      "title": "Free (Acapella)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Rumi,Jinu,EJAE - Free (Instrumental).ncm",
+      "title": "Free (Instrumental)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Rumi,Jinu,EJAE - Free (Sing-Along).ncm",
+      "title": "Free (Sing-Along)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Rumi,Jinu,EJAE - Free.ncm",
+      "title": "Free",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Soda Pop (1).ncm",
+      "title": "Soda Pop",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": [
+        {
+          "tag_id": "genre.pop",
+          "confidence": 0.55,
+          "source": "metadata.path",
+          "evidence": "Path '/test-data/music-working/eval-converted/Saja Boys,Andrew 崔,Neckwav - Soda Pop (1).mp3' contains 'Pop'"
+        }
+      ]
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Soda Pop (Acapella).ncm",
+      "title": "Soda Pop (Acapella)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": [
+        {
+          "tag_id": "genre.pop",
+          "confidence": 0.55,
+          "source": "metadata.path",
+          "evidence": "Path '/test-data/music-working/eval-converted/Saja Boys,Andrew 崔,Neckwav - Soda Pop (Acapella).mp3' contains 'Pop'"
+        }
+      ]
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Soda Pop (Instrumental).ncm",
+      "title": "Soda Pop (Instrumental)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": [
+        {
+          "tag_id": "genre.pop",
+          "confidence": 0.55,
+          "source": "metadata.path",
+          "evidence": "Path '/test-data/music-working/eval-converted/Saja Boys,Andrew 崔,Neckwav - Soda Pop (Instrumental).mp3' contains 'Pop'"
+        }
+      ]
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Soda Pop (Sing-Along).ncm",
+      "title": "Soda Pop (Sing-Along)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": [
+        {
+          "tag_id": "genre.pop",
+          "confidence": 0.55,
+          "source": "metadata.path",
+          "evidence": "Path '/test-data/music-working/eval-converted/Saja Boys,Andrew 崔,Neckwav - Soda Pop (Sing-Along).mp3' contains 'Pop'"
+        }
+      ]
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Soda Pop.ncm",
+      "title": "Soda Pop",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": [
+        {
+          "tag_id": "genre.pop",
+          "confidence": 0.55,
+          "source": "metadata.path",
+          "evidence": "Path '/test-data/music-working/eval-converted/Saja Boys,Andrew 崔,Neckwav - Soda Pop.mp3' contains 'Pop'"
+        }
+      ]
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Your Idol (1).ncm",
+      "title": "Your Idol",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Your Idol (Acapella).ncm",
+      "title": "Your Idol (Acapella)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Your Idol (Instrumental).ncm",
+      "title": "Your Idol (Instrumental)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Your Idol (Sing-Along).ncm",
+      "title": "Your Idol (Sing-Along)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "Saja Boys,Andrew 崔,Neckwav - Your Idol.ncm",
+      "title": "Your Idol",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "TWICE - Strategy (1).ncm",
+      "title": "Strategy",
+      "artist": "TWICE",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "TWICE - Strategy.ncm",
+      "title": "Strategy",
+      "artist": "TWICE",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "TWICE - TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG) (1).ncm",
+      "title": "TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG)",
+      "artist": "TWICE",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "TWICE - TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG).ncm",
+      "title": "TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG)",
+      "artist": "TWICE",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "suggestions": []
+    },
+    {
+      "ncm_file": "죠커스 - 오솔길 Path.ncm",
+      "title": "오솔길 Path",
+      "artist": "죠커스",
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "suggestions": []
+    }
+  ]
+}

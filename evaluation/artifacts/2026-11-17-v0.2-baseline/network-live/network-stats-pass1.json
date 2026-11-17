@@ -1,0 +1,415 @@
+{
+  "cache_source": "eval-run-v0.2/library.sqlite3",
+  "cache_rows_before": 0,
+  "cache_rows_after": 11,
+  "cache_rows_found_after": 0,
+  "cache_rows_no_match_after": 11,
+  "cache_hits_at_provider": 19,
+  "cache_misses_at_provider": 28,
+  "network_requests": 28,
+  "unique_pairs_attempted": 16,
+  "retries": 7,
+  "transport_failures": 17,
+  "min_start_interval_seconds": 1.101,
+  "mean_start_interval_seconds": 2.378,
+  "user_agent": "MusicTagger/0.1.0 (local personal-library tagger; https://github.com/zhentianashen-tech/musigtagger)",
+  "pacing_contract_seconds": 1.1,
+  "attempts": [
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30495.469298223,
+      "outcome": "ok",
+      "finished": 30496.411523932
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30496.571311932,
+      "outcome": "ok",
+      "finished": 30497.514246724
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Jinu/Ahn Hyo-seop",
+      "attempt": 1,
+      "started": 30497.677301599,
+      "outcome": "ok",
+      "finished": 30498.858116058
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Jokers",
+      "attempt": 1,
+      "started": 30498.864777766,
+      "outcome": "ok",
+      "finished": 30499.817551392
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 1,
+      "started": 30499.9671106,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30500.900413559
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 2,
+      "started": 30502.90524831,
+      "outcome": "ok",
+      "finished": 30503.842790477
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 1,
+      "started": 30504.007998019,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30504.955655603
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 2,
+      "started": 30506.957557145,
+      "outcome": "ok",
+      "finished": 30507.910075021
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Marcelo Zarvos/EJAE",
+      "attempt": 1,
+      "started": 30508.058096021,
+      "outcome": "ok",
+      "finished": 30510.050768397
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "MeloMance",
+      "attempt": 1,
+      "started": 30510.059441522,
+      "outcome": "ok",
+      "finished": 30511.134940647
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "MeloMance",
+      "attempt": 1,
+      "started": 30511.160290606,
+      "outcome": "ok",
+      "finished": 30512.169049273
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30512.261457981,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30513.190620607
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30515.197223691,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30516.228860441
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30520.232064318,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30521.260768985
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30521.333490485,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30522.439175819
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30524.441322362,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30525.396404404
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30529.402259406,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30531.411551573
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30531.414754573,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30532.355201449
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30534.361254033,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30535.313100742
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30539.318742244,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30540.326490786
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30540.421033619,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30541.426325161
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30543.428747037,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30544.38567783
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30548.392091748,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30549.335883748
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 1,
+      "started": 30549.493825165,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30550.440942915
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 2,
+      "started": 30552.443164666,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30553.452679709
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 3,
+      "started": 30557.458401627,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30558.397953003
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "TWICE",
+      "attempt": 1,
+      "started": 30558.560186169,
+      "outcome": "ok",
+      "finished": 30559.526952961
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "죠커스",
+      "attempt": 1,
+      "started": 30559.66377817,
+      "outcome": "ok",
+      "finished": 30560.591802254
+    }
+  ],
+  "failures": [
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 1,
+      "started": 30499.9671106,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30500.900413559
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 1,
+      "started": 30504.007998019,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30504.955655603
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30512.261457981,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30513.190620607
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30515.197223691,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30516.228860441
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30520.232064318,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30521.260768985
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30521.333490485,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30522.439175819
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30524.441322362,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30525.396404404
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30529.402259406,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30531.411551573
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30531.414754573,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30532.355201449
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30534.361254033,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30535.313100742
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30539.318742244,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30540.326490786
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 30540.421033619,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30541.426325161
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 2,
+      "started": 30543.428747037,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30544.38567783
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 3,
+      "started": 30548.392091748,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30549.335883748
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 1,
+      "started": 30549.493825165,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30550.440942915
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 2,
+      "started": 30552.443164666,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30553.452679709
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 3,
+      "started": 30557.458401627,
+      "outcome": "error",
+      "error": "musicbrainz rate-limited the lookup (HTTP 503)",
+      "finished": 30558.397953003
+    }
+  ]
+}

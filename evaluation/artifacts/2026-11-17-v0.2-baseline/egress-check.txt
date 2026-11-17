@@ -1,0 +1,53 @@
+# Egress check — 2026-11-17T11:59:55Z
+
+## DNS
+172.19.0.79     musicbrainz.org
+
+## TCP 443
+bash: connect: No route to host
+bash: line 1: /dev/tcp/musicbrainz.org/443: No route to host
+tcp-fail: No route to host
+
+## MusicBrainz search API
+curl: (7) Failed to connect to musicbrainz.org port 443 after 3110 ms: Couldn't connect to server
+
+## Network provider run (from scan-report.json)
+
+{
+  "network_enabled": true,
+  "network_attempted_pairs": 16,
+  "providers": [
+    {
+      "provider": "local",
+      "run_id": "v0.2-local",
+      "suggestions": 47,
+      "failures": 0,
+      "failure_sample": []
+    },
+    {
+      "provider": "network",
+      "run_id": "v0.2-network",
+      "suggestions": 0,
+      "failures": 47,
+      "failure_sample": [
+        {
+          "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,Audrey Nuna - Golden (1).mp3",
+          "reason": "NetworkLookupError: musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>"
+        },
+        {
+          "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Acapella).mp3",
+          "reason": "NetworkLookupError: musicbrainz unreachable: URLError: <urlopen error [Errno 113] No route to host>"
+        },
+        {
+          "path": "/test-data/music-working/eval-input-ncm-remux/HUNTR／X,EJAE,AUDREY NUNA - Golden (Instrumental).mp3",
+          "reason": "NetworkLookupError: lookup already failed earlier in this batch for album='KPop Demon Hunters (Soundtrack from the Netflix Film / Deluxe Version)' artist='HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast'; skipping without another network attempt"
+        }
+      ]
+    }
+  ],
+  "with_title": 47,
+  "with_artist": 47,
+  "with_album": 47,
+  "with_genre": 0,
+  "with_year": 0
+}
