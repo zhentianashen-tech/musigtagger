@@ -227,6 +227,25 @@ class MetadataProviderTests(unittest.TestCase):
                 self.assertEqual(first, second)
                 self.taxonomy.validate_tag_ids(s.tag_id for s in first)
 
+    def test_embedded_release_date_always_surfaces_an_era(self) -> None:
+        # Operator requirement (2026-11-17): if any local source carries a
+        # date, the provider MUST suggest an era from it. The scanner parses
+        # TDRC/DATE full dates ("1994-05-01") to the descriptor year; whatever
+        # the source format, the year reaching the descriptor yields era.
+        from musigtagger.engine.scanner import _parse_year
+
+        for raw in ("1994", "1994-05", "1994-05-01", "1994-05-01T12:34:56"):
+            with self.subTest(date=raw):
+                track = TrackDescriptor(
+                    path="/music/01 - Song.mp3", year=_parse_year(raw)
+                )
+                by_id = {s.tag_id: s for s in self.provider.suggest(track)}
+                self.assertIn("era.1990s", by_id)
+                self.assertEqual(by_id["era.1990s"].confidence, 0.98)
+                self.assertEqual(by_id["era.1990s"].source, "metadata.embedded")
+                self.assertIn("1994", by_id["era.1990s"].evidence)
+                self.taxonomy.validate_tag_ids(by_id)
+
     def test_refuses_any_other_taxonomy_version(self) -> None:
         old = TaxonomyLoader.load(TAXONOMY_DIR, version="0.1.0-draft")
         with self.assertRaises(TaxonomyVersionMismatch):
