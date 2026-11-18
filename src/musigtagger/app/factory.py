@@ -81,11 +81,11 @@ def build_context(
         store,
         taxonomy,
         events,
-        scanner=scanner or build_scanner(config),
+        scanner=scanner or build_scanner(config, store.connection),
         providers=(
             providers
             if providers is not None
-            else build_providers(config)
+            else build_providers(config, taxonomy, store.connection)
         ),
         clock=clock,
         run_id_factory=run_id_factory,

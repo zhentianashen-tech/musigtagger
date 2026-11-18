@@ -167,6 +167,35 @@ the above: `tracks`, `suggestions` (five review states, `final_tag_id`,
 `schema_migrations` / `PRAGMA user_version` marker. Changes after v1 are
 escalated, not slipped into a feature branch.
 
+### 3.10 Engine wiring (app-layer adapters/factories)
+
+The engine's components are constructed with arguments the app's generic
+`--scanner` / `--provider` ports cannot supply, so the application wires them
+through app-layer adapters and factories (`src/musigtagger/app/ingest.py`).
+The engine interfaces are unchanged; the adapters only construct and delegate —
+no tagging logic lives in the app layer. The mapping is:
+
+| App port | Engine component | Constructor arguments |
+|---|---|---|
+| `Scanner.scan(root)` | `engine.scanner.LibraryScanner` (via `EngineLibraryScannerAdapter`) | `connection` (the app's `LibraryStore.connection`) |
+| provider `suggest(descriptor)` | `engine.metadata.MetadataSuggestionProvider` | `taxonomy` (pinned `Taxonomy` snapshot) |
+| provider `suggest(descriptor)` | `engine.network.MusicBrainzReleaseYearProvider` | `taxonomy`, `ReleaseDateCache(connection)` |
+
+The default wiring (no `--scanner` / `--provider` flags) is:
+
+- **scanner** — `LibraryScanner(connection)` behind
+  `EngineLibraryScannerAdapter`, which maps `scan_directory(root)`'s
+  `ScanBatchResult` onto the app's `ScanItem` sequence and re-reads each
+  descriptor's file size/mtime (the engine result does not carry them).
+- **providers** — `MetadataSuggestionProvider(taxonomy)` plus, unless
+  `--no-network` is given, `MusicBrainzReleaseYearProvider(taxonomy,
+  ReleaseDateCache(connection))`. The metadata provider is what guarantees the
+  default scan path produces genre/era suggestions with no network.
+
+The `--no-network` flag (config `network_enabled=False`) drops the network
+provider so the default path stays fully local; the network provider, when
+enabled, degrades to logged abstentions offline (engine behaviour, MUSI-14).
+
 ---
 
 ## 4. Evaluation observability contract

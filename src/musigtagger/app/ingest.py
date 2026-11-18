@@ -236,6 +236,10 @@ class MutagenScanner:
 def _format_name(audio: object) -> str | None:
     mapping = {
         "MP3": "mp3",
+        # ``mutagen.File(easy=True)`` yields ``EasyMP3`` for MP3 containers, not
+        # ``MP3``; without this entry the descriptor reports ``easymp3`` and the
+        # write path refuses it (MUSI-15 finding 1).
+        "EasyMP3": "mp3",
         "FLAC": "flac",
         "OggVorbis": "ogg",
         "OggOpus": "opus",
@@ -373,22 +377,115 @@ def new_run_id() -> str:
     return f"run-{stamp}-{secrets.token_hex(3)}"
 
 
-def build_scanner(config: AppConfig) -> Any:
-    if not config.scanner_spec:
-        return MutagenScanner()
-    return instantiate(load_object(config.scanner_spec, kind="scanner"))
+class EngineLibraryScannerAdapter:
+    """Adapt the engine's ``LibraryScanner.scan_directory`` to the ``Scanner`` port.
+
+    The engine scanner parses supported audio files and upserts tracks into the
+    SQLite connection it is handed; its ``scan_directory`` returns descriptors
+    without file size/mtime, which the app's ``ScanItem`` carries. This adapter
+    delegates to the engine scanner and then re-reads the size/mtime of each
+    descriptor's path so the application can persist the full record. It never
+    re-implements parsing or classification (CONTRACTS.md §3: adapters only
+    construct and delegate).
+    """
+
+    def __init__(self, connection: object) -> None:
+        from ..engine import LibraryScanner  # lazy: engine pulls in mutagen
+
+        self._scanner = LibraryScanner(connection)
+
+    def scan(self, root: Path) -> Iterable[ScanItem]:
+        result = self._scanner.scan_directory(root)
+        for track in result.tracks:
+            path = Path(track.path)
+            size = mtime_ns = None
+            try:
+                stat = path.stat()
+            except OSError:  # pragma: no cover - path existed when scanned
+                pass
+            else:
+                size = stat.st_size
+                mtime_ns = stat.st_mtime_ns
+            yield ScanItem(
+                path=path,
+                descriptor=track,
+                file_size_bytes=size,
+                mtime_ns=mtime_ns,
+            )
+        for failure in result.failures:
+            yield ScanItem(path=Path(failure.path), error=failure.reason)
 
 
-def build_providers(config: AppConfig) -> list[tuple[str, SuggestionProvider]]:
-    if not config.provider_spec:
-        return []
-    specs = [part for part in config.provider_spec.split(",") if part.strip()]
-    providers: list[tuple[str, SuggestionProvider]] = []
-    for spec in specs:
-        spec = spec.strip()
-        name = spec.split(":", 1)[-1]
-        provider = instantiate(load_object(spec, kind="provider"))
-        if not hasattr(provider, "suggest"):
-            raise IngestError(f"configured provider {spec!r} has no suggest() method")
-        providers.append((name, provider))
+def default_scanner(connection: object) -> Scanner:
+    """The app's default scanner: the engine ``LibraryScanner`` behind an adapter."""
+    return EngineLibraryScannerAdapter(connection)
+
+
+def default_providers(
+    taxonomy: object,
+    connection: object,
+    *,
+    include_network: bool = True,
+    network_transport: object | None = None,
+) -> list[tuple[str, SuggestionProvider]]:
+    """The app's default providers: engine metadata + MusicBrainz release-year.
+
+    ``taxonomy`` is the pinned :class:`~musigtagger.contracts.Taxonomy` (the
+    engine provider's constructor argument). ``include_network=False`` and/or a
+    ``network_transport`` are the test and offline seam; production uses the
+    engine's real MusicBrainz transport with its default pacing and retries.
+    The local metadata provider is always included and is what yields the
+    genre/era suggestions the default scan path must produce.
+    """
+    from ..engine import MetadataSuggestionProvider  # lazy: engine pulls in mutagen
+    from ..engine.network import (  # lazy
+        MusicBrainzReleaseYearProvider,
+        ReleaseDateCache,
+    )
+
+    providers: list[tuple[str, SuggestionProvider]] = [
+        ("metadata", MetadataSuggestionProvider(taxonomy)),
+    ]
+    if include_network:
+        providers.append(
+            (
+                "network.musicbrainz",
+                MusicBrainzReleaseYearProvider(
+                    taxonomy, ReleaseDateCache(connection), network_transport
+                ),
+            )
+        )
     return providers
+
+
+def build_scanner(config: AppConfig, connection: object | None = None) -> Any:
+    if config.scanner_spec:
+        return instantiate(load_object(config.scanner_spec, kind="scanner"))
+    if connection is None:
+        return MutagenScanner()
+    return default_scanner(connection)
+
+
+def build_providers(
+    config: AppConfig,
+    taxonomy: TaxonomyService | None = None,
+    connection: object | None = None,
+) -> list[tuple[str, SuggestionProvider]]:
+    if config.provider_spec:
+        specs = [part for part in config.provider_spec.split(",") if part.strip()]
+        providers: list[tuple[str, SuggestionProvider]] = []
+        for spec in specs:
+            spec = spec.strip()
+            name = spec.split(":", 1)[-1]
+            provider = instantiate(load_object(spec, kind="provider"))
+            if not hasattr(provider, "suggest"):
+                raise IngestError(f"configured provider {spec!r} has no suggest() method")
+            providers.append((name, provider))
+        return providers
+    if taxonomy is None or connection is None:
+        return []
+    return default_providers(
+        taxonomy.taxonomy,
+        connection,
+        include_network=config.network_enabled,
+    )

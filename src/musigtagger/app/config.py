@@ -63,6 +63,10 @@ class AppConfig:
     scanner_spec: str | None = None
     #: NCM decoder used by the batch conversion step (MUSI-12 provides it).
     ncm_converter_spec: str | None = None
+    #: Whether the default wiring includes the MusicBrainz release-date provider.
+    #: Offline/local-only operation sets this False (``--no-network``); the
+    #: local metadata provider (genre/era) is always part of the default path.
+    network_enabled: bool = True
     #: Roots that may be read but never written. The operator's read-only source
     #: library is always protected; extra roots can be added on the command line.
     protected_roots: tuple[Path, ...] = field(
@@ -138,6 +142,7 @@ class AppConfig:
                 if values.get("ncm_converter_spec")
                 else None
             ),
+            network_enabled=bool(values.get("network_enabled", True)),
             protected_roots=tuple(unique_protected),
             language=str(values.get("language", "en")),
             actor=str(values.get("actor", "local-user")),

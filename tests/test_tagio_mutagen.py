@@ -127,6 +127,56 @@ class MutagenTaggerTests(unittest.TestCase):
         self.assertEqual(read["ERA"], ["1990s"])
         self.assertEqual(self.tagger.probe(self.flac).format, "flac")
 
+    def test_mp3_via_default_scanner_reports_mp3_and_undo_is_byte_exact(self) -> None:
+        # MUSI-15 finding 1: the bundled stopgap scanner reads ``easy=True``, so
+        # an MP3 descriptor used to come back with ``format='easymp3'`` and the
+        # write path refused it. This exercises the *default* scan path (the
+        # bundled MutagenScanner, not a hand-written fixture scanner) and proves
+        # the MP3 is writable and that undo restores the exact original bytes.
+        from musigtagger.app.ingest import MutagenScanner
+
+        context = build_context(
+            AppConfig(
+                library_root=self.tempdir,
+                database_path=self.tempdir / "library.sqlite3",
+                backup_root=self.tempdir / "backups",
+                events_path=self.tempdir / "events.jsonl",
+                taxonomy_dir=TAXONOMY_DIR,
+                taxonomy_version=TAXONOMY_VERSION,
+                protected_roots=(),
+            ),
+            codec=self.tagger,
+            scanner=MutagenScanner(),
+            providers=[("test.stub", StubProvider())],
+            run_id_factory=lambda: "run-default-scanner",
+        )
+        try:
+            original = self.mp3.read_bytes()
+            report = context.ingestion.scan(self.tempdir)
+            self.assertEqual(report.indexed, 2)  # mp3 + flac both parsed
+            formats = {
+                Path(row["path"]).suffix: row["format"]
+                for row in context.store.list_tracks(limit=10)
+            }
+            self.assertEqual(formats[".mp3"], "mp3")
+            self.assertEqual(formats[".flac"], "flac")
+
+            track_ids = [int(row["id"]) for row in context.store.list_tracks(limit=10)]
+            context.review.batch_accept(track_ids=track_ids)
+            result = context.writer.apply()
+            self.assertEqual(result.status, "completed", result.outcomes)
+            self.assertIn("Hip-hop", str(self.tagger.read(self.mp3)))
+
+            undo = context.writer.undo(result.batch_id)
+            self.assertEqual(undo.status, "completed", undo.outcomes)
+            self.assertEqual(self.mp3.read_bytes(), original)
+            self.assertEqual(
+                hashlib.sha256(self.mp3.read_bytes()).hexdigest(),
+                hashlib.sha256(original).hexdigest(),
+            )
+        finally:
+            context.close()
+
     def test_apply_then_undo_restores_the_original_bytes(self) -> None:
         context = build_context(
             AppConfig(
