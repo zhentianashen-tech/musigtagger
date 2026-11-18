@@ -148,7 +148,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
         for failure in gating_failures:
             print(f"  - {failure}", file=sys.stderr)
         return 2
-    print("all gating checks pass against the PROPOSED thresholds (pending human sign-off)")
+    print("all gating checks pass against the APPROVED thresholds (operator sign-off 2026-11-17)")
     return 0
 
 

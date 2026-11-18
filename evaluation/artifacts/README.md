@@ -1,5 +1,10 @@
 # Evaluation artifacts — 2026-11-17 (MUSI-9)
 
+> **Default Phase-1 baseline:** `2026-11-18-v0.3-baseline/` — era recall
+> **47/47 (100%)**, regenerated on merged `main` after the MUSI-14 era-lookup
+> fix. The v0.2 set is **superseded** (kept for audit — see its
+> `SUPERSEDED.md`).
+
 Ground-truth pass for the fixed 47-file library, run against the recovered
 engine candidate (MUSI-13 branch `agent/application-integration-engine/a9f30fec959e`
 @ `6df6ffc`, unreviewed at the time of the run).
@@ -67,7 +72,8 @@ album/cover on 47/47, genre/date on 0/47). The 47-track list is frozen in
 | `../fixtures/prelabels-v0.2-validation.json` | Validation record: 0 issues, tag ids checked against taxonomy v1.0.0 |
 | `2026-11-17-v0.2-prep-report.md` | v0.2 prep report: labels, date research, open questions, baseline hold |
 | `2026-11-17-operator-signoff.md` | Operator sign-off: thresholds approved as-is, defaults accepted, taxonomy deferred, origin gap accepted |
-| `2026-11-17-v0.2-baseline/` | Formal v0.2 baseline on main 5354663: report, events, worksheet, hand-check, egress evidence, RUN.md |
+| `2026-11-17-v0.2-baseline/` | Formal v0.2 baseline on main 5354663: report, events, worksheet, hand-check, egress evidence, RUN.md — **SUPERSEDED** (era recall 0/47, pre-MUSI-14-fix; see `SUPERSEDED.md`) |
+| `2026-11-18-v0.3-baseline/` | **Default baseline** on main 29cd5e0 (post-MUSI-14-fix): report, events (47 local + 47 network era), worksheet, hand-check, scan/batches/network ledger, RUN.md — era recall 47/47 |
 | `2026-11-17-v0.2-baseline/ACCEPTANCE.md` | Operator acceptance on the four quality bars plus option-A safety; era recall "unmeasured — runtime egress"; networked date check pending |
 | `../tools/networked_date_check.py` | One-shot networked date check for final Phase-1 acceptance (fails closed offline) |
 | `2026-11-17-v0.2-baseline/network-live/` | Live MusicBrainz run: era recall 0/47, 16/16 pairs no-match, two-pass cache/request/retry ledger |

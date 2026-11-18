@@ -22,19 +22,46 @@ evaluation/
 
 ## Usage
 
+### Reproduce the checked-in baseline
+
+The default Phase-1 baseline is
+`artifacts/2026-11-18-v0.3-baseline/` (era recall **47/47**, regenerated on
+merged `main` after the MUSI-14 era-lookup fix). The v0.2 set is superseded
+(kept for audit — see its `SUPERSEDED.md`). Score the checked-in artifacts
+(no network needed; exit `0` = all gating checks pass, era recall 47/47):
+
 ```bash
 # from the repo root, after `uv sync` (provides musigtagger + mutagen)
 PYTHONPATH=evaluation:src uv run --no-project python -m evalharness report \
-    --events path/to/events.jsonl \
-    --hand-check path/to/handcheck.jsonl \
+    --events evaluation/artifacts/2026-11-18-v0.3-baseline/engine-events.jsonl \
+    --hand-check evaluation/artifacts/2026-11-18-v0.3-baseline/hand-check.jsonl \
     --prelabels evaluation/fixtures/track-pre-label-worksheet-v0.2.csv \
-    --safety-evidence path/to/safety.jsonl \
-    --batches path/to/batches.json \
-    --scan-report path/to/scan-report.json \
+    --safety-evidence evaluation/artifacts/2026-11-17-safety-smoke/safety-evidence.jsonl \
+    --batches evaluation/artifacts/2026-11-18-v0.3-baseline/batches.json \
+    --scan-report evaluation/artifacts/2026-11-18-v0.3-baseline/scan-report.json \
     --taxonomy-dir taxonomy --taxonomy-version 1.0.0 \
-    --source-root /test-data/music-working/eval-input-ncm-remux \
-    --out evaluation/reports/baseline-v0.2.md
+    --source-root /test-data/music-source \
+    --out evaluation/reports/baseline-v0.3-reproduced.md
 ```
+
+Expected numbers: precision 93.6% (44/47), coverage 93.6% (44/47), batch
+100% (1/1), taxonomy conformance 100% (94 refs), safety 3/3, era recall
+47/47 (100%).
+
+### Regenerate the baseline from a live engine run
+
+To *re-cut* the baseline (regenerates the suggestion events over the frozen
+47-track remux input with the local + MusicBrainz network providers — requires
+MusicBrainz egress), then re-run the report command above against the fresh
+artifacts:
+
+```bash
+PYTHONPATH=src:evaluation uv run --no-project python evaluation/tools/run_v0_2_network_baseline.py \
+    eval-run-v0.3 --taxonomy taxonomy --run-id-prefix v0.3 --max-attempts 5
+```
+
+If the networked pass does not reproduce 47/47 era recall (e.g. MusicBrainz
+transient 503 storms), retry before checking in a degraded baseline.
 
 Exit codes: `0` — every gating check passed; `2` — at least one gating check
 failed (including "ground truth missing, metrics not computable"). The report

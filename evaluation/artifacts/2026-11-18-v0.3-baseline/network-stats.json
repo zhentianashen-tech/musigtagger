@@ -1,0 +1,276 @@
+{
+  "cache_source": "(fresh)",
+  "cache_rows_before": 0,
+  "cache_rows_after": 16,
+  "cache_rows_found_after": 16,
+  "cache_rows_no_match_after": 0,
+  "cache_hits_at_provider": 31,
+  "cache_misses_at_provider": 16,
+  "network_requests": 32,
+  "unique_pairs_attempted": 18,
+  "retries": 2,
+  "transport_failures": 0,
+  "min_start_interval_seconds": 1.1,
+  "mean_start_interval_seconds": 2.331,
+  "user_agent": "MusicTagger/0.1.0 (local personal-library tagger; https://github.com/zhentianashen-tech/musigtagger)",
+  "pacing_contract_seconds": 1.1,
+  "attempts": [
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "HUNTR/X/EJAE/Audrey Nuna/REI AMI/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 39540.287751475,
+      "outcome": "ok",
+      "finished": 39546.54697952
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39546.54714627,
+      "outcome": "ok",
+      "finished": 39552.868100064
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "HUNTR/X/EJAE/AUDREY NUNA/REI AMI/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 39552.874944231,
+      "outcome": "ok",
+      "finished": 39553.998626773
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39553.998746023,
+      "outcome": "ok",
+      "finished": 39556.082842732
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "Jinu/Ahn Hyo-seop",
+      "attempt": 1,
+      "started": 39556.090380191,
+      "outcome": "ok",
+      "finished": 39557.077774899
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39557.191769275,
+      "outcome": "ok",
+      "finished": 39558.258900733
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "Jokers",
+      "attempt": 1,
+      "started": 39558.293140275,
+      "outcome": "ok",
+      "finished": 39559.267824817
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39559.393797442,
+      "outcome": "ok",
+      "finished": 39560.419543526
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Marcelo Zarvos",
+      "attempt": 1,
+      "started": 39560.494211818,
+      "outcome": "ok",
+      "finished": 39570.986091948
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39570.986389073,
+      "outcome": "ok",
+      "finished": 39572.10783974
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "Marcelo Zarvos",
+      "attempt": 1,
+      "started": 39572.110646823,
+      "outcome": "ok",
+      "finished": 39573.286963407
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39573.287054157,
+      "outcome": "ok",
+      "finished": 39574.471462658
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "Marcelo Zarvos/EJAE",
+      "attempt": 1,
+      "started": 39574.476742283,
+      "outcome": "ok",
+      "finished": 39575.438426825
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39575.579622658,
+      "outcome": "ok",
+      "finished": 39578.602481285
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "MeloMance",
+      "attempt": 1,
+      "started": 39578.608565701,
+      "outcome": "ok",
+      "finished": 39579.748754619
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39579.748865369,
+      "outcome": "ok",
+      "finished": 39582.906423327
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "MeloMance",
+      "attempt": 1,
+      "started": 39582.912156244,
+      "outcome": "ok",
+      "finished": 39584.04034662
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39584.04046212,
+      "outcome": "ok",
+      "finished": 39585.102223245
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 39585.142749787,
+      "outcome": "ok",
+      "finished": 39586.225798954
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39586.243209537,
+      "outcome": "ok",
+      "finished": 39587.631701288
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "Rumi/Jinu/EJAE/Andrew 崔/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 39587.638081038,
+      "outcome": "ok",
+      "finished": 39588.921105872
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39588.921218747,
+      "outcome": "ok",
+      "finished": 39589.898959914
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 39590.024804248,
+      "outcome": "ok",
+      "finished": 39591.000053623
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39591.125285373,
+      "outcome": "ok",
+      "finished": 39592.10529804
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "Saja Boys/Andrew 崔/Neckwav/Danny Chung/Kevin Woo/samUIL Lee/KPop Demon Hunters Cast",
+      "attempt": 1,
+      "started": 39592.231207124,
+      "outcome": "ok",
+      "finished": 39593.315432416
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39593.333472291,
+      "outcome": "ok",
+      "finished": 39594.337767833
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "TWICE",
+      "attempt": 1,
+      "started": 39594.435537583,
+      "outcome": "ok",
+      "finished": 39596.455990584
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39596.456076751,
+      "outcome": "ok",
+      "finished": 39603.812719546
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": "TWICE",
+      "attempt": 1,
+      "started": 39603.824942879,
+      "outcome": "ok",
+      "finished": 39610.00196409
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film",
+      "artist": null,
+      "attempt": 1,
+      "started": 39610.002063882,
+      "outcome": "ok",
+      "finished": 39611.449759799
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": "죠커스",
+      "attempt": 1,
+      "started": 39611.458091424,
+      "outcome": "ok",
+      "finished": 39612.491235924
+    },
+    {
+      "album": "KPop Demon Hunters (Soundtrack from the Netflix Film)",
+      "artist": null,
+      "attempt": 1,
+      "started": 39612.562677549,
+      "outcome": "ok",
+      "finished": 39614.611321217
+    }
+  ],
+  "failures": []
+}
